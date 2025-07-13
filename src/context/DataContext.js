@@ -16,6 +16,8 @@ const initialState = {
   customColors: [],
   customFormulas: [],
   customTopperTypes: [],
+  customBrands: [],
+  customCollections: [],
   usedCombinations: []
 };
 
@@ -64,6 +66,23 @@ function dataReducer(state, action) {
       return { ...state, customTopperTypes: [...state.customTopperTypes, action.payload] };
     case 'REMOVE_CUSTOM_TOPPER_TYPE':
       return { ...state, customTopperTypes: state.customTopperTypes.filter(t => t !== action.payload) };
+    case 'ADD_CUSTOM_BRAND':
+      return { ...state, customBrands: [...state.customBrands, action.payload] };
+    case 'REMOVE_CUSTOM_BRAND':
+      return { ...state, customBrands: state.customBrands.filter(b => b !== action.payload) };
+    case 'ADD_CUSTOM_COLLECTION':
+      return { ...state, customCollections: [...state.customCollections, action.payload] };
+    case 'REMOVE_CUSTOM_COLLECTION':
+      return { ...state, customCollections: state.customCollections.filter(c => c !== action.payload) };
+    case 'UPDATE_POLISH':
+      return { 
+        ...state, 
+        nailPolishes: state.nailPolishes.map(p => 
+          p.name === action.payload.originalName && p.brand === action.payload.originalBrand 
+            ? action.payload.updatedPolish 
+            : p
+        )
+      };
     case 'SAVE_COMBO_PHOTO':
       return { ...state, comboPhotos: { ...state.comboPhotos, [action.payload.key]: action.payload.photo } };
     case 'REMOVE_COMBO_PHOTO':
@@ -185,12 +204,32 @@ export const DataProvider = ({ children }) => {
     return [...defaults, ...state.customTopperTypes];
   };
 
+  const getAllBrands = () => {
+    // Extract unique brands from existing polishes and toppers
+    const existingBrands = new Set([
+      ...state.nailPolishes.map(p => p.brand),
+      ...state.toppers.map(t => t.brand)
+    ]);
+    return [...Array.from(existingBrands).sort(), ...state.customBrands];
+  };
+
+  const getAllCollections = () => {
+    // Extract unique collections from existing polishes and toppers
+    const existingCollections = new Set([
+      ...state.nailPolishes.map(p => p.collection).filter(Boolean),
+      ...state.toppers.map(t => t.collection).filter(Boolean)
+    ]);
+    return [...Array.from(existingCollections).sort(), ...state.customCollections];
+  };
+
   const value = {
     ...state,
     dispatch: enhancedDispatch,
     getAllColors,
     getAllFormulas,
-    getAllTopperTypes
+    getAllTopperTypes,
+    getAllBrands,
+    getAllCollections
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

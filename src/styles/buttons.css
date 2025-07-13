@@ -262,3 +262,34 @@ body.dark-mode .import-button:hover {
     background: #316a9b;
     color: #e8e6e3;
 }
+
+.delete-button-inline {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.delete-button-inline:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.edit-button-inline {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.edit-button-inline:hover {
+  background-color: rgba(108, 117, 125, 0.1);
+}

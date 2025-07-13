@@ -3,12 +3,13 @@ import { useData } from '../context/DataContext';
 import { useModal } from '../context/ModalContext';
 
 const Collection = () => {
-  const { nailPolishes, toppers, getAllColors, getAllFormulas, getAllTopperTypes, dispatch } = useData();
+  const { nailPolishes, toppers, getAllColors, getAllFormulas, getAllTopperTypes, getAllBrands, getAllCollections, dispatch } = useData();
   const { success, confirm } = useModal();
   
   const [showAddPolish, setShowAddPolish] = useState(false);
   const [showAddTopper, setShowAddTopper] = useState(false);
-  const [newPolish, setNewPolish] = useState({ name: '', brand: '', color: '', formula: '', collection: '' });
+  const [editingPolish, setEditingPolish] = useState(null);
+  const [newPolish, setNewPolish] = useState({ name: '', brand: '', colors: [], formula: '', collection: '' });
   const [newTopper, setNewTopper] = useState({ name: '', brand: '', type: '', collection: '' });
   
   // Sort and search states
@@ -78,15 +79,53 @@ const Collection = () => {
 
   const handleAddPolish = (e) => {
     e.preventDefault();
-    if (!newPolish.name || !newPolish.brand || !newPolish.color || !newPolish.formula) {
-      success('Please fill in all fields', 'Missing Information');
+    if (!newPolish.name || !newPolish.brand || newPolish.colors.length === 0 || !newPolish.formula) {
+      success('Please fill in all required fields', 'Missing Information');
       return;
     }
     
     dispatch({ type: 'ADD_POLISH', payload: newPolish });
-    setNewPolish({ name: '', brand: '', color: '', formula: '', collection: '' });
+    setNewPolish({ name: '', brand: '', colors: [], formula: '', collection: '' });
     setShowAddPolish(false);
     success('Polish added successfully!');
+  };
+
+  const handleEditPolish = (polish) => {
+    setEditingPolish({
+      ...polish,
+      originalName: polish.name,
+      originalBrand: polish.brand,
+      colors: Array.isArray(polish.colors) ? polish.colors : [polish.color].filter(Boolean)
+    });
+  };
+
+  const handleUpdatePolish = (e) => {
+    e.preventDefault();
+    if (!editingPolish.name || !editingPolish.brand || editingPolish.colors.length === 0 || !editingPolish.formula) {
+      success('Please fill in all required fields', 'Missing Information');
+      return;
+    }
+    
+    dispatch({ 
+      type: 'UPDATE_POLISH', 
+      payload: {
+        originalName: editingPolish.originalName,
+        originalBrand: editingPolish.originalBrand,
+        updatedPolish: {
+          name: editingPolish.name,
+          brand: editingPolish.brand,
+          colors: editingPolish.colors,
+          formula: editingPolish.formula,
+          collection: editingPolish.collection
+        }
+      }
+    });
+    setEditingPolish(null);
+    success('Polish updated successfully!');
+  };
+
+  const cancelEdit = () => {
+    setEditingPolish(null);
   };
 
   const handleAddTopper = (e) => {
@@ -154,43 +193,97 @@ const Collection = () => {
           </div>
           <div className="form-group">
             <label>Brand:</label>
-            <input
-              type="text"
+            <select
               value={newPolish.brand}
               onChange={(e) => setNewPolish(prev => ({ ...prev, brand: e.target.value }))}
               required
-            />
+            >
+              <option value="">Select Brand</option>
+              {getAllBrands().map(brand => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Brand</option>
+            </select>
+            {newPolish.brand === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom brand name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customBrand = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_BRAND', payload: customBrand });
+                    setNewPolish(prev => ({ ...prev, brand: customBrand }));
+                  } else {
+                    setNewPolish(prev => ({ ...prev, brand: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
           </div>
           <div className="form-group">
-            <label>Color:</label>
+            <label>Colors:</label>
+            <div style={{ marginBottom: '10px' }}>
+              {newPolish.colors.map((color, index) => (
+                <span key={index} className="color-tag" style={{ marginRight: '5px', marginBottom: '5px', display: 'inline-block' }}>
+                  {color.charAt(0).toUpperCase() + color.slice(1)}
+                  <button 
+                    type="button" 
+                    onClick={() => setNewPolish(prev => ({ 
+                      ...prev, 
+                      colors: prev.colors.filter((_, i) => i !== index) 
+                    }))}
+                    style={{ marginLeft: '5px', background: 'none', border: 'none', color: 'red', cursor: 'pointer' }}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
             <select
-              value={newPolish.color}
-              onChange={(e) => setNewPolish(prev => ({ ...prev, color: e.target.value }))}
-              required
+              value=""
+              onChange={(e) => {
+                if (e.target.value && !newPolish.colors.includes(e.target.value)) {
+                  setNewPolish(prev => ({ 
+                    ...prev, 
+                    colors: [...prev.colors, e.target.value] 
+                  }));
+                }
+              }}
             >
-              <option value="">Select Color</option>
-              {getAllColors().map(color => (
+              <option value="">Add Color</option>
+              {getAllColors().filter(color => !newPolish.colors.includes(color)).map(color => (
                 <option key={color} value={color}>
                   {color.charAt(0).toUpperCase() + color.slice(1)}
                 </option>
               ))}
               <option value="custom">+ Add Custom Color</option>
             </select>
-            {newPolish.color === 'custom' && (
-              <input
-                type="text"
-                placeholder="Enter custom color name"
-                onBlur={(e) => {
-                  if (e.target.value.trim()) {
-                    const customColor = e.target.value.toLowerCase().trim();
+            <input
+              type="text"
+              placeholder="Or type custom color and press Enter"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const customColor = e.target.value.toLowerCase().trim();
+                  if (customColor && !newPolish.colors.includes(customColor)) {
                     dispatch({ type: 'ADD_CUSTOM_COLOR', payload: customColor });
-                    setNewPolish(prev => ({ ...prev, color: customColor }));
-                  } else {
-                    setNewPolish(prev => ({ ...prev, color: '' }));
+                    setNewPolish(prev => ({ 
+                      ...prev, 
+                      colors: [...prev.colors, customColor] 
+                    }));
+                    e.target.value = '';
                   }
-                }}
-                style={{ marginTop: '10px' }}
-              />
+                }
+              }}
+              style={{ marginTop: '10px', width: '100%' }}
+            />
+            {newPolish.colors.length === 0 && (
+              <p style={{ color: 'red', fontSize: '0.9em', marginTop: '5px' }}>
+                Please add at least one color
+              </p>
             )}
           </div>
           <div className="form-group">
@@ -227,12 +320,34 @@ const Collection = () => {
           </div>
           <div className="form-group">
             <label>Collection (Optional):</label>
-            <input
-              type="text"
+            <select
               value={newPolish.collection}
               onChange={(e) => setNewPolish(prev => ({ ...prev, collection: e.target.value }))}
-              placeholder="e.g., Summer 2024, Holiday Collection"
-            />
+            >
+              <option value="">No Collection</option>
+              {getAllCollections().map(collection => (
+                <option key={collection} value={collection}>
+                  {collection}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Collection</option>
+            </select>
+            {newPolish.collection === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom collection name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customCollection = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_COLLECTION', payload: customCollection });
+                    setNewPolish(prev => ({ ...prev, collection: customCollection }));
+                  } else {
+                    setNewPolish(prev => ({ ...prev, collection: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
           </div>
           <div className="form-buttons">
             <button type="button" className="cancel-button" onClick={() => setShowAddPolish(false)}>
@@ -259,12 +374,35 @@ const Collection = () => {
           </div>
           <div className="form-group">
             <label>Brand:</label>
-            <input
-              type="text"
+            <select
               value={newTopper.brand}
               onChange={(e) => setNewTopper(prev => ({ ...prev, brand: e.target.value }))}
               required
-            />
+            >
+              <option value="">Select Brand</option>
+              {getAllBrands().map(brand => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Brand</option>
+            </select>
+            {newTopper.brand === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom brand name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customBrand = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_BRAND', payload: customBrand });
+                    setNewTopper(prev => ({ ...prev, brand: customBrand }));
+                  } else {
+                    setNewTopper(prev => ({ ...prev, brand: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
           </div>
           <div className="form-group">
             <label>Type:</label>
@@ -300,12 +438,34 @@ const Collection = () => {
           </div>
           <div className="form-group">
             <label>Collection (Optional):</label>
-            <input
-              type="text"
+            <select
               value={newTopper.collection}
               onChange={(e) => setNewTopper(prev => ({ ...prev, collection: e.target.value }))}
-              placeholder="e.g., Summer 2024, Holiday Collection"
-            />
+            >
+              <option value="">No Collection</option>
+              {getAllCollections().map(collection => (
+                <option key={collection} value={collection}>
+                  {collection}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Collection</option>
+            </select>
+            {newTopper.collection === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom collection name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customCollection = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_COLLECTION', payload: customCollection });
+                    setNewTopper(prev => ({ ...prev, collection: customCollection }));
+                  } else {
+                    setNewTopper(prev => ({ ...prev, collection: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
           </div>
           <div className="form-buttons">
             <button type="button" className="cancel-button" onClick={() => setShowAddTopper(false)}>
@@ -313,6 +473,187 @@ const Collection = () => {
             </button>
             <button type="submit" className="save-button">
               Add Topper
+            </button>
+          </div>
+        </form>
+      )}
+
+      {editingPolish && (
+        <form className="edit-polish-form" onSubmit={handleUpdatePolish}>
+          <h3>Edit Polish</h3>
+          <div className="form-group">
+            <label>Name:</label>
+            <input
+              type="text"
+              value={editingPolish.name}
+              onChange={(e) => setEditingPolish(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Brand:</label>
+            <select
+              value={editingPolish.brand}
+              onChange={(e) => setEditingPolish(prev => ({ ...prev, brand: e.target.value }))}
+              required
+            >
+              <option value="">Select Brand</option>
+              {getAllBrands().map(brand => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Brand</option>
+            </select>
+            {editingPolish.brand === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom brand name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customBrand = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_BRAND', payload: customBrand });
+                    setEditingPolish(prev => ({ ...prev, brand: customBrand }));
+                  } else {
+                    setEditingPolish(prev => ({ ...prev, brand: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
+            <label>Colors:</label>
+            <div style={{ marginBottom: '10px' }}>
+              {editingPolish.colors.map((color, index) => (
+                <span key={index} className="color-tag" style={{ marginRight: '5px', marginBottom: '5px', display: 'inline-block' }}>
+                  {color.charAt(0).toUpperCase() + color.slice(1)}
+                  <button 
+                    type="button" 
+                    onClick={() => setEditingPolish(prev => ({ 
+                      ...prev, 
+                      colors: prev.colors.filter((_, i) => i !== index) 
+                    }))}
+                    style={{ marginLeft: '5px', background: 'none', border: 'none', color: 'red', cursor: 'pointer' }}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value && !editingPolish.colors.includes(e.target.value)) {
+                  setEditingPolish(prev => ({ 
+                    ...prev, 
+                    colors: [...prev.colors, e.target.value] 
+                  }));
+                }
+              }}
+            >
+              <option value="">Add Color</option>
+              {getAllColors().filter(color => !editingPolish.colors.includes(color)).map(color => (
+                <option key={color} value={color}>
+                  {color.charAt(0).toUpperCase() + color.slice(1)}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Color</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Or type custom color and press Enter"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const customColor = e.target.value.toLowerCase().trim();
+                  if (customColor && !editingPolish.colors.includes(customColor)) {
+                    dispatch({ type: 'ADD_CUSTOM_COLOR', payload: customColor });
+                    setEditingPolish(prev => ({ 
+                      ...prev, 
+                      colors: [...prev.colors, customColor] 
+                    }));
+                    e.target.value = '';
+                  }
+                }
+              }}
+              style={{ marginTop: '10px', width: '100%' }}
+            />
+            {editingPolish.colors.length === 0 && (
+              <p style={{ color: 'red', fontSize: '0.9em', marginTop: '5px' }}>
+                Please add at least one color
+              </p>
+            )}
+          </div>
+          <div className="form-group">
+            <label>Formula:</label>
+            <select
+              value={editingPolish.formula}
+              onChange={(e) => setEditingPolish(prev => ({ ...prev, formula: e.target.value }))}
+              required
+            >
+              <option value="">Select Formula</option>
+              {getAllFormulas().map(formula => (
+                <option key={formula} value={formula}>
+                  {formula.charAt(0).toUpperCase() + formula.slice(1)}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Formula</option>
+            </select>
+            {editingPolish.formula === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom formula name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customFormula = e.target.value.toLowerCase().trim();
+                    dispatch({ type: 'ADD_CUSTOM_FORMULA', payload: customFormula });
+                    setEditingPolish(prev => ({ ...prev, formula: customFormula }));
+                  } else {
+                    setEditingPolish(prev => ({ ...prev, formula: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
+            <label>Collection (Optional):</label>
+            <select
+              value={editingPolish.collection}
+              onChange={(e) => setEditingPolish(prev => ({ ...prev, collection: e.target.value }))}
+            >
+              <option value="">No Collection</option>
+              {getAllCollections().map(collection => (
+                <option key={collection} value={collection}>
+                  {collection}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Collection</option>
+            </select>
+            {editingPolish.collection === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom collection name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customCollection = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_COLLECTION', payload: customCollection });
+                    setEditingPolish(prev => ({ ...prev, collection: customCollection }));
+                  } else {
+                    setEditingPolish(prev => ({ ...prev, collection: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-buttons">
+            <button type="button" className="cancel-button" onClick={cancelEdit}>
+              Cancel
+            </button>
+            <button type="submit" className="save-button">
+              Update Polish
             </button>
           </div>
         </form>
@@ -353,17 +694,36 @@ const Collection = () => {
                     <div key={index} className="polish-item">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h4>{polish.name}</h4>
-                        <button 
-                          className="delete-button-inline" 
-                          onClick={() => handleDeletePolish(polish)}
-                          title="Delete polish"
-                        >
-                          ×
-                        </button>
+                        <div>
+                          <button 
+                            className="edit-button-inline" 
+                            onClick={() => handleEditPolish(polish)}
+                            title="Edit polish"
+                            style={{ marginRight: '5px' }}
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            className="delete-button-inline" 
+                            onClick={() => handleDeletePolish(polish)}
+                            title="Delete polish"
+                          >
+                            ×
+                          </button>
+                        </div>
                       </div>
                       <div className="polish-details">
                         <span className="brand">{polish.brand}</span>
-                        <span className="color-tag">{polish.color}</span>
+                        {/* Display multiple colors or single color */}
+                        {Array.isArray(polish.colors) ? (
+                          polish.colors.map((color, colorIndex) => (
+                            <span key={colorIndex} className="color-tag" style={{ marginRight: '3px' }}>
+                              {color.charAt(0).toUpperCase() + color.slice(1)}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="color-tag">{polish.color}</span>
+                        )}
                         <span className="formula-tag">{polish.formula}</span>
                         {polish.collection && <span className="collection-tag">{polish.collection}</span>}
                       </div>
