@@ -1,0 +1,215 @@
+/* Button Styles */
+.pick-button {
+    width: calc(100% - 60px);
+    margin: 0 30px 30px;
+    padding: 16px;
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7, #B0D5C7, #477977);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pick-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.pick-button:active {
+    transform: translateY(0);
+}
+
+.primary-button {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7, #B0D5C7, #477977);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.secondary-button {
+    padding: 12px 24px;
+    background: transparent;
+    color: #295982;
+    border: 2px solid #295982;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+    background: #295982;
+    color: white;
+}
+
+.add-polish-toggle,
+.add-topper-toggle {
+    width: calc(100% - 60px);
+    margin: 10px 30px;
+    padding: 12px;
+    background: transparent;
+    color: #6FABD0;
+    border: 2px solid #6FABD0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-topper-toggle {
+    color: #99CEBE;
+    border-color: #99CEBE;
+}
+
+.add-polish-toggle:hover {
+    background: #6FABD0;
+    color: white;
+}
+
+.add-topper-toggle:hover {
+    background: #99CEBE;
+    color: white;
+}
+
+.save-button {
+    flex: 1;
+    padding: 12px;
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7, #B0D5C7, #477977);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.cancel-button {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    color: #6c757d;
+    border: 2px solid #6c757d;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-button:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.delete-button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px 0;
+}
+
+.delete-button:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.delete-polish-btn,
+.delete-topper-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-polish-btn:hover,
+.delete-topper-btn:hover {
+    background: #c82333;
+}
+
+.add-option-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #99CEBE, #BDE6E2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    white-space: nowrap;
+}
+
+.add-option-btn:hover {
+    transform: translateY(-1px);
+}
+
+.export-button,
+.import-button {
+    padding: 12px 24px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px 0;
+}
+
+.export-button:hover,
+.import-button:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.reset-button {
+    width: 100%;
+    padding: 12px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 20px 0;
+}
+
+.reset-button:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}

@@ -1,0 +1,87 @@
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  updateProfile
+} from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { auth, db } from "./config";
+
+// Sign up with email and password
+export const signUpWithEmail = async (email, password, displayName) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    // Update the user's display name
+    await updateProfile(user, {
+      displayName: displayName
+    });
+    
+    // Create user document in Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email: user.email,
+      displayName: displayName,
+      createdAt: new Date().toISOString(),
+      polishCollection: [],
+      topperCollection: [],
+      recentCombinations: []
+    });
+    
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: displayName
+    };
+  } catch (error) {
+    // Preserve the original Firebase error with code and message
+    throw error;
+  }
+};
+
+// Sign in with email and password
+export const signInWithEmail = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName
+    };
+  } catch (error) {
+    // Preserve the original Firebase error with code and message
+    throw error;
+  }
+};
+
+// Sign out
+export const signOutUser = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// Get current user data from Firestore
+export const getUserData = async (uid) => {
+  try {
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if (userDoc.exists()) {
+      return userDoc.data();
+    } else {
+      throw new Error("User data not found");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// Listen to auth state changes
+export const onAuthStateChange = (callback) => {
+  return onAuthStateChanged(auth, callback);
+};

@@ -1,0 +1,41 @@
+/* Tab Navigation Styles */
+.tab-navigation {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 15px 20px;
+    background: transparent;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.tab-button.active {
+    color: #295982;
+    border-bottom-color: #295982;
+    background: white;
+}
+
+.tab-content {
+    padding: 30px;
+    min-height: 500px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.tab-content.hidden {
+    display: none;
+}

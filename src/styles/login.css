@@ -1,0 +1,233 @@
+/* Login Page Styles */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 450px;
+    width: 100%;
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    background: linear-gradient(135deg, #99CEBE, #BDE6E2, #4E997A);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.login-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.login-form-container {
+    padding: 40px 30px;
+}
+
+.login-form-container h2 {
+    color: #295982;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.login-subtitle {
+    color: #6c757d;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.login-form {
+    margin-bottom: 25px;
+}
+
+.login-form .form-group {
+    margin-bottom: 20px;
+}
+
+.login-form label {
+    display: block;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: #6FABD0;
+    box-shadow: 0 0 0 3px rgba(111, 171, 208, 0.1);
+}
+
+.login-form input::placeholder {
+    color: #adb5bd;
+}
+
+.login-button {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7, #B0D5C7, #477977);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.login-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(41, 89, 130, 0.3);
+}
+
+.login-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.login-toggle {
+    text-align: center;
+    padding: 20px 0;
+    border-top: 1px solid #e9ecef;
+}
+
+.login-toggle p {
+    color: #6c757d;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    color: #295982;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.toggle-button:hover {
+    color: #6FABD0;
+}
+
+.demo-note {
+    background: #f8f9fa;
+    border-left: 4px solid #99CEBE;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.demo-note p {
+    color: #495057;
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.demo-note strong {
+    color: #295982;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 10px;
+    }
+    
+    .login-card {
+        max-width: 100%;
+    }
+    
+    .login-header {
+        padding: 30px 20px;
+    }
+    
+    .login-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .login-form-container {
+        padding: 30px 20px;
+    }
+    
+    .login-form-container h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Loading State */
+.login-button:disabled {
+    position: relative;
+}
+
+.login-button:disabled::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
