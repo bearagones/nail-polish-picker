@@ -71,7 +71,16 @@ function dataReducer(state, action) {
     case 'REMOVE_CUSTOM_BRAND':
       return { ...state, customBrands: state.customBrands.filter(b => b !== action.payload) };
     case 'ADD_CUSTOM_COLLECTION':
-      return { ...state, customCollections: [...state.customCollections, action.payload] };
+      // Prevent duplicates by checking if collection already exists
+      const allExistingCollections = new Set([
+        ...state.nailPolishes.map(p => p.collection).filter(Boolean),
+        ...state.toppers.map(t => t.collection).filter(Boolean),
+        ...state.customCollections
+      ]);
+      if (!allExistingCollections.has(action.payload)) {
+        return { ...state, customCollections: [...state.customCollections, action.payload] };
+      }
+      return state;
     case 'REMOVE_CUSTOM_COLLECTION':
       return { ...state, customCollections: state.customCollections.filter(c => c !== action.payload) };
     case 'UPDATE_POLISH':
@@ -195,7 +204,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const getAllFormulas = () => {
-    const defaults = ['creme', 'shimmer', 'glitter', 'metallic', 'holographic', 'chrome'];
+    const defaults = ['crème', 'shimmer', 'glitter', 'metallic', 'holographic', 'chrome'];
     return [...defaults, ...state.customFormulas];
   };
 
@@ -219,7 +228,12 @@ export const DataProvider = ({ children }) => {
       ...state.nailPolishes.map(p => p.collection).filter(Boolean),
       ...state.toppers.map(t => t.collection).filter(Boolean)
     ]);
-    return [...Array.from(existingCollections).sort(), ...state.customCollections];
+    // Combine existing and custom collections, remove duplicates, and sort alphabetically
+    const allCollections = new Set([
+      ...Array.from(existingCollections),
+      ...state.customCollections
+    ]);
+    return Array.from(allCollections).sort();
   };
 
   const value = {

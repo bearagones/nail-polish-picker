@@ -97,7 +97,16 @@ const Combinations = () => {
                   <div className="polish-section">
                     <div className="polish-details">
                       <span className="brand">{combo.polish.brand}</span>
-                      <span className="color-tag">{combo.polish.color}</span>
+                      {/* Display multiple colors or single color */}
+                      {Array.isArray(combo.polish.colors) ? (
+                        combo.polish.colors.map((color, colorIndex) => (
+                          <span key={colorIndex} className="color-tag" style={{ marginRight: '3px' }}>
+                            {color.charAt(0).toUpperCase() + color.slice(1)}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="color-tag">{combo.polish.color}</span>
+                      )}
                       <span className="formula-tag">{combo.polish.formula}</span>
                     </div>
                   </div>

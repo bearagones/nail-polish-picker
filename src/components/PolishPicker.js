@@ -110,9 +110,15 @@ const PolishPicker = () => {
 
     // Filter by color
     if (filters.color !== 'any') {
-      filteredPolishes = filteredPolishes.filter(polish => 
-        polish.color.toLowerCase() === filters.color.toLowerCase()
-      );
+      filteredPolishes = filteredPolishes.filter(polish => {
+        // Handle both old single-color and new multi-color formats
+        if (Array.isArray(polish.colors)) {
+          return polish.colors.some(color => color.toLowerCase() === filters.color.toLowerCase());
+        } else if (polish.color) {
+          return polish.color.toLowerCase() === filters.color.toLowerCase();
+        }
+        return false;
+      });
     }
 
     // Filter by formula
@@ -213,7 +219,16 @@ const PolishPicker = () => {
             <h2>{result.polish.name}</h2>
             <div className="polish-details">
               <span className="brand">{result.polish.brand}</span>
-              <span className="color-tag">{result.polish.color}</span>
+              {/* Display multiple colors or single color */}
+              {Array.isArray(result.polish.colors) ? (
+                result.polish.colors.map((color, colorIndex) => (
+                  <span key={colorIndex} className="color-tag" style={{ marginRight: '3px' }}>
+                    {color.charAt(0).toUpperCase() + color.slice(1)}
+                  </span>
+                ))
+              ) : (
+                <span className="color-tag">{result.polish.color}</span>
+              )}
               <span className="formula-tag">{result.polish.formula}</span>
             </div>
           </div>
