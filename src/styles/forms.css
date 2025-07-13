@@ -105,3 +105,59 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
 }
+
+/* Settings Appearance Styles */
+.appearance-setting {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.dark-mode-toggle {
+    margin-bottom: 10px;
+}
+
+.checkbox-label-inline {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.checkbox-label-inline input[type="checkbox"] {
+    margin-right: 12px;
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+.checkbox-text {
+    user-select: none;
+}
+
+.setting-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Dark Mode Appearance Styles - Dark Reader Compatible */
+body.dark-mode .appearance-setting {
+    background: #1b1e1f;
+    border: 1px solid #353a3c;
+}
+
+body.dark-mode .checkbox-label-inline {
+    color: #e8e6e3;
+}
+
+body.dark-mode .setting-description {
+    color: #c8c3bc;
+}
+
+body.dark-mode .checkbox-label-inline input[type="checkbox"] {
+    accent-color: #3391ff;
+}

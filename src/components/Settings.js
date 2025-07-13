@@ -88,16 +88,18 @@ const Settings = () => {
       
       <div className="settings-section">
         <h3>Appearance</h3>
-        <div className="form-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={darkMode}
-              onChange={(e) => setDarkMode(e.target.checked)}
-            />
-            Dark Mode
-          </label>
-          <p style={{ fontSize: '0.9rem', color: '#6c757d', marginTop: '5px' }}>
+        <div className="appearance-setting">
+          <div className="dark-mode-toggle">
+            <label className="checkbox-label-inline">
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={(e) => setDarkMode(e.target.checked)}
+              />
+              <span className="checkbox-text">Dark Mode</span>
+            </label>
+          </div>
+          <p className="setting-description">
             Toggle between light and dark themes
           </p>
         </div>

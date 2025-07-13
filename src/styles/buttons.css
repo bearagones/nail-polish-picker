@@ -213,3 +213,52 @@
     background: #c82333;
     transform: translateY(-1px);
 }
+
+/* Dark Mode Button Styles */
+body.dark-mode .secondary-button {
+    background: transparent;
+    color: #8ab8da;
+    border-color: #316a9b;
+}
+
+body.dark-mode .secondary-button:hover {
+    background: #316a9b;
+    color: #e8e6e3;
+}
+
+body.dark-mode .cancel-button {
+    background: transparent;
+    color: #8ab8da;
+    border-color: #316a9b;
+}
+
+body.dark-mode .cancel-button:hover {
+    background: #316a9b;
+    color: #e8e6e3;
+}
+
+body.dark-mode .add-polish-toggle,
+body.dark-mode .add-topper-toggle {
+    background: transparent;
+    color: #8ab8da;
+    border-color: #316a9b;
+}
+
+body.dark-mode .add-polish-toggle:hover,
+body.dark-mode .add-topper-toggle:hover {
+    background: #316a9b;
+    color: #e8e6e3;
+}
+
+body.dark-mode .export-button,
+body.dark-mode .import-button {
+    background: transparent;
+    color: #8ab8da;
+    border: 2px solid #316a9b;
+}
+
+body.dark-mode .export-button:hover,
+body.dark-mode .import-button:hover {
+    background: #316a9b;
+    color: #e8e6e3;
+}

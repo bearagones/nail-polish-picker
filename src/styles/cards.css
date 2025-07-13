@@ -89,11 +89,13 @@
 .stat-card h3 {
     font-size: 2rem;
     margin-bottom: 5px;
+    color: white !important;
 }
 
 .stat-card p {
     font-size: 0.9rem;
     opacity: 0.9;
+    color: white;
 }
 
 /* Collection Items */

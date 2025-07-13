@@ -39,3 +39,24 @@
 .tab-content.hidden {
     display: none;
 }
+
+/* Dark Mode Navigation Styles */
+body.dark-mode .tab-navigation {
+    background: #1b1e1f;
+    border-bottom-color: #353a3c;
+}
+
+body.dark-mode .tab-button {
+    color: #b5afa6;
+}
+
+body.dark-mode .tab-button:hover {
+    background: #232627;
+    color: #e8e6e3;
+}
+
+body.dark-mode .tab-button.active {
+    color: #8ab8da;
+    border-bottom-color: #316a9b;
+    background: #181a1b;
+}
