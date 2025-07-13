@@ -3,13 +3,16 @@ import { useModal } from '../context/ModalContext';
 
 const Login = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
     name: ''
   });
+  const [resetEmail, setResetEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const { success, error } = useModal();
 
   const handleInputChange = (e) => {
@@ -116,14 +119,56 @@ const Login = ({ onLogin }) => {
     }
   };
 
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
+    
+    if (!resetEmail) {
+      error('Please enter your email address');
+      return;
+    }
+
+    if (!resetEmail.includes('@')) {
+      error('Please enter a valid email address');
+      return;
+    }
+
+    setIsResetting(true);
+
+    try {
+      const { resetPassword } = await import('../firebase/auth');
+      await resetPassword(resetEmail);
+      success('Password reset email sent! Check your inbox for instructions.');
+      setShowForgotPassword(false);
+      setResetEmail('');
+    } catch (err) {
+      console.error('Password reset error:', err);
+      
+      let errorMessage = 'Failed to send password reset email. Please try again.';
+      
+      if (err.code === 'auth/user-not-found' || err.message.includes('auth/user-not-found')) {
+        errorMessage = 'No account found with this email address.';
+      } else if (err.code === 'auth/invalid-email' || err.message.includes('auth/invalid-email')) {
+        errorMessage = 'Please enter a valid email address.';
+      } else if (err.code === 'auth/too-many-requests' || err.message.includes('auth/too-many-requests')) {
+        errorMessage = 'Too many requests. Please try again later.';
+      }
+      
+      error(errorMessage);
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   const toggleMode = () => {
     setIsLogin(!isLogin);
+    setShowForgotPassword(false);
     setFormData({
       email: '',
       password: '',
       confirmPassword: '',
       name: ''
     });
+    setResetEmail('');
   };
 
   return (
@@ -135,99 +180,157 @@ const Login = ({ onLogin }) => {
         </div>
         
         <div className="login-form-container">
-          <h2>{isLogin ? 'Welcome Back!' : 'Create Account'}</h2>
-          <p className="login-subtitle">
-            {isLogin 
-              ? 'Sign in to access your nail polish collection' 
-              : 'Join us to save your collection across devices'
-            }
-          </p>
+          {showForgotPassword ? (
+            <>
+              <h2>Reset Password</h2>
+              <p className="login-subtitle">
+                Enter your email address and we'll send you a link to reset your password.
+              </p>
 
-          <form onSubmit={handleSubmit} className="login-form">
-            {!isLogin && (
-              <div className="form-group">
-                <label htmlFor="name">Full Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Enter your full name"
-                  required={!isLogin}
-                />
+              <form onSubmit={handlePasswordReset} className="login-form">
+                <div className="form-group">
+                  <label htmlFor="resetEmail">Email Address</label>
+                  <input
+                    type="email"
+                    id="resetEmail"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+
+                <button 
+                  type="submit" 
+                  className="login-button"
+                  disabled={isResetting}
+                >
+                  {isResetting ? 'Sending...' : 'Send Reset Email'}
+                </button>
+              </form>
+
+              <div className="login-toggle">
+                <p>
+                  Remember your password?{' '}
+                  <button 
+                    type="button" 
+                    className="toggle-button"
+                    onClick={() => setShowForgotPassword(false)}
+                  >
+                    Back to Sign In
+                  </button>
+                </p>
               </div>
-            )}
+            </>
+          ) : (
+            <>
+              <h2>{isLogin ? 'Welcome Back!' : 'Create Account'}</h2>
+              <p className="login-subtitle">
+                {isLogin 
+                  ? 'Sign in to access your nail polish collection' 
+                  : 'Join us to save your collection across devices'
+                }
+              </p>
 
-            <div className="form-group">
-              <label htmlFor="email">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
+              <form onSubmit={handleSubmit} className="login-form">
+                {!isLogin && (
+                  <div className="form-group">
+                    <label htmlFor="name">Full Name</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="Enter your full name"
+                      required={!isLogin}
+                    />
+                  </div>
+                )}
 
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Enter your password"
-                required
-              />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="email">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
 
-            {!isLogin && (
-              <div className="form-group">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  placeholder="Confirm your password"
-                  required={!isLogin}
-                />
+                <div className="form-group">
+                  <label htmlFor="password">Password</label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Enter your password"
+                    required
+                  />
+                </div>
+
+                {!isLogin && (
+                  <div className="form-group">
+                    <label htmlFor="confirmPassword">Confirm Password</label>
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      placeholder="Confirm your password"
+                      required={!isLogin}
+                    />
+                  </div>
+                )}
+
+                <button 
+                  type="submit" 
+                  className="login-button"
+                  disabled={isLoading}
+                >
+                  {isLoading 
+                    ? (isLogin ? 'Signing In...' : 'Creating Account...') 
+                    : (isLogin ? 'Sign In' : 'Create Account')
+                  }
+                </button>
+              </form>
+
+              {isLogin && (
+                <div className="forgot-password">
+                  <button 
+                    type="button" 
+                    className="forgot-password-button"
+                    onClick={() => setShowForgotPassword(true)}
+                  >
+                    Forgot your password?
+                  </button>
+                </div>
+              )}
+
+              <div className="login-toggle">
+                <p>
+                  {isLogin ? "Don't have an account? " : "Already have an account? "}
+                  <button 
+                    type="button" 
+                    className="toggle-button"
+                    onClick={toggleMode}
+                  >
+                    {isLogin ? 'Sign Up' : 'Sign In'}
+                  </button>
+                </p>
               </div>
-            )}
 
-            <button 
-              type="submit" 
-              className="login-button"
-              disabled={isLoading}
-            >
-              {isLoading 
-                ? (isLogin ? 'Signing In...' : 'Creating Account...') 
-                : (isLogin ? 'Sign In' : 'Create Account')
-              }
-            </button>
-          </form>
-
-          <div className="login-toggle">
-            <p>
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <button 
-                type="button" 
-                className="toggle-button"
-                onClick={toggleMode}
-              >
-                {isLogin ? 'Sign Up' : 'Sign In'}
-              </button>
-            </p>
-          </div>
-
-          <div className="demo-note">
-            <p><strong>Firebase Integration:</strong> This app uses Firebase Authentication and Firestore for secure user accounts and data storage across devices.</p>
-          </div>
+              <div className="demo-note">
+                <p><strong>Firebase Integration:</strong> This app uses Firebase Authentication and Firestore for secure user accounts and data storage across devices.</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -3,7 +3,8 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "./config";
@@ -78,6 +79,17 @@ export const getUserData = async (uid) => {
     }
   } catch (error) {
     throw new Error(error.message);
+  }
+};
+
+// Send password reset email
+export const resetPassword = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return { success: true };
+  } catch (error) {
+    // Preserve the original Firebase error with code and message
+    throw error;
   }
 };
 

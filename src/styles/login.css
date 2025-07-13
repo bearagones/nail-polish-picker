@@ -160,6 +160,25 @@
     color: #6FABD0;
 }
 
+.forgot-password {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.forgot-password-button {
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.forgot-password-button:hover {
+    color: #295982;
+}
+
 .demo-note {
     background: #f8f9fa;
     border-left: 4px solid #99CEBE;
@@ -230,4 +249,78 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Dark Mode Login Styles */
+body.dark-mode .login-card {
+    background: #181a1b;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .login-header {
+    background: linear-gradient(135deg, #2e6054, #1d4d49, #3e7a62);
+}
+
+body.dark-mode .login-form-container h2 {
+    color: #e8e6e3;
+}
+
+body.dark-mode .login-subtitle {
+    color: #c8c3bc;
+}
+
+body.dark-mode .login-form label {
+    color: #b5afa6;
+}
+
+body.dark-mode .login-form input {
+    background: #1e2021;
+    border-color: #353a3c;
+    color: #e8e6e3;
+}
+
+body.dark-mode .login-form input:focus {
+    border-color: #132888;
+    box-shadow: 0 0 0 3px rgba(19, 40, 137, 0.1);
+}
+
+body.dark-mode .login-form input::placeholder {
+    color: #9e9689;
+}
+
+body.dark-mode .login-toggle {
+    border-top-color: #353a3c;
+}
+
+body.dark-mode .login-toggle p {
+    color: #c8c3bc;
+}
+
+body.dark-mode .toggle-button {
+    color: #8ab8da;
+}
+
+body.dark-mode .toggle-button:hover {
+    color: #3391ff;
+}
+
+body.dark-mode .forgot-password-button {
+    color: #c8c3bc;
+}
+
+body.dark-mode .forgot-password-button:hover {
+    color: #8ab8da;
+}
+
+body.dark-mode .demo-note {
+    background: #1b1e1f;
+    border-left-color: #2e6054;
+}
+
+body.dark-mode .demo-note p {
+    color: #c8c3bc;
+}
+
+body.dark-mode .demo-note strong {
+    color: #8ab8da;
 }
