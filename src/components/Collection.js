@@ -347,25 +347,27 @@ const Collection = () => {
                 </select>
               </div>
             </div>
-            <div className="polish-list">
-              {sortedAndFilteredPolishes.map((polish, index) => (
-                <div key={index} className="polish-item">
-                  <h4>{polish.name}</h4>
-                  <div className="polish-details">
-                    <span className="brand">{polish.brand}</span>
-                    <span className="color-tag">{polish.color}</span>
-                    <span className="formula-tag">{polish.formula}</span>
-                    {polish.collection && <span className="collection-tag">{polish.collection}</span>}
+            <div className="collection-content">
+              <div className="polish-list">
+                {sortedAndFilteredPolishes.map((polish, index) => (
+                  <div key={index} className="polish-item">
+                    <h4>{polish.name}</h4>
+                    <div className="polish-details">
+                      <span className="brand">{polish.brand}</span>
+                      <span className="color-tag">{polish.color}</span>
+                      <span className="formula-tag">{polish.formula}</span>
+                      {polish.collection && <span className="collection-tag">{polish.collection}</span>}
+                    </div>
+                    <button 
+                      className="delete-button" 
+                      onClick={() => handleDeletePolish(polish)}
+                      style={{ marginTop: '10px' }}
+                    >
+                      Delete
+                    </button>
                   </div>
-                  <button 
-                    className="delete-button" 
-                    onClick={() => handleDeletePolish(polish)}
-                    style={{ marginTop: '10px' }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </>
         )}
@@ -399,24 +401,26 @@ const Collection = () => {
                 </select>
               </div>
             </div>
-            <div className="topper-list">
-              {sortedAndFilteredToppers.map((topper, index) => (
-                <div key={index} className="topper-item">
-                  <h4>{topper.name}</h4>
-                  <div className="topper-details">
-                    <span className="brand">{topper.brand}</span>
-                    <span className="formula-tag">{topper.type}</span>
-                    {topper.collection && <span className="collection-tag">{topper.collection}</span>}
+            <div className="collection-content">
+              <div className="topper-list">
+                {sortedAndFilteredToppers.map((topper, index) => (
+                  <div key={index} className="topper-item">
+                    <h4>{topper.name}</h4>
+                    <div className="topper-details">
+                      <span className="brand">{topper.brand}</span>
+                      <span className="formula-tag">{topper.type}</span>
+                      {topper.collection && <span className="collection-tag">{topper.collection}</span>}
+                    </div>
+                    <button 
+                      className="delete-button" 
+                      onClick={() => handleDeleteTopper(topper)}
+                      style={{ marginTop: '10px' }}
+                    >
+                      Delete
+                    </button>
                   </div>
-                  <button 
-                    className="delete-button" 
-                    onClick={() => handleDeleteTopper(topper)}
-                    style={{ marginTop: '10px' }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </>
         )}

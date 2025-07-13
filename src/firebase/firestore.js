@@ -1,18 +1,43 @@
-import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./config";
+
+// Initialize user document if it doesn't exist
+const initializeUserDocument = async (userId) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    
+    if (!userDoc.exists()) {
+      await setDoc(userRef, {
+        polishCollection: [],
+        topperCollection: [],
+        recentCombinations: [],
+        settings: {},
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.error("Error initializing user document:", error);
+    throw new Error(error.message);
+  }
+};
 
 // Add polish to user's collection
 export const addPolishToCollection = async (userId, polish) => {
   try {
+    await initializeUserDocument(userId);
     const userRef = doc(db, "users", userId);
     await updateDoc(userRef, {
       polishCollection: arrayUnion({
         ...polish,
         id: Date.now().toString(),
         addedAt: new Date().toISOString()
-      })
+      }),
+      updatedAt: new Date().toISOString()
     });
   } catch (error) {
+    console.error("Error adding polish:", error);
     throw new Error(error.message);
   }
 };
@@ -39,15 +64,18 @@ export const removePolishFromCollection = async (userId, polishId) => {
 // Add topper to user's collection
 export const addTopperToCollection = async (userId, topper) => {
   try {
+    await initializeUserDocument(userId);
     const userRef = doc(db, "users", userId);
     await updateDoc(userRef, {
       topperCollection: arrayUnion({
         ...topper,
         id: Date.now().toString(),
         addedAt: new Date().toISOString()
-      })
+      }),
+      updatedAt: new Date().toISOString()
     });
   } catch (error) {
+    console.error("Error adding topper:", error);
     throw new Error(error.message);
   }
 };
@@ -74,6 +102,7 @@ export const removeTopperFromCollection = async (userId, topperId) => {
 // Add combination to recent combinations
 export const addRecentCombination = async (userId, combination) => {
   try {
+    await initializeUserDocument(userId);
     const userRef = doc(db, "users", userId);
     const userDoc = await getDoc(userRef);
     
@@ -94,10 +123,12 @@ export const addRecentCombination = async (userId, combination) => {
       }
       
       await updateDoc(userRef, {
-        recentCombinations: recentCombinations
+        recentCombinations: recentCombinations,
+        updatedAt: new Date().toISOString()
       });
     }
   } catch (error) {
+    console.error("Error adding recent combination:", error);
     throw new Error(error.message);
   }
 };

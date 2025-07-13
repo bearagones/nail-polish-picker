@@ -3,7 +3,7 @@ import { useData } from '../context/DataContext';
 import { useModal } from '../context/ModalContext';
 
 const PolishPicker = () => {
-  const { nailPolishes, toppers, getAllColors, getAllFormulas, dispatch } = useData();
+  const { nailPolishes, toppers, getAllColors, getAllFormulas, usedCombinations, comboPhotos, dispatch } = useData();
   const { success } = useModal();
   
   const [filters, setFilters] = useState({
@@ -17,14 +17,33 @@ const PolishPicker = () => {
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [isUsed, setIsUsed] = useState(false);
+  const [showAddTopper, setShowAddTopper] = useState(false);
+  const [existingCombination, setExistingCombination] = useState(null);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
+  // Function to check if a combination already exists
+  const findExistingCombination = (polish, topper) => {
+    return usedCombinations.find(combo => 
+      combo.used === true &&
+      combo.polish.name === polish.name &&
+      combo.polish.brand === polish.brand &&
+      ((combo.topper && topper && combo.topper.name === topper.name && combo.topper.brand === topper.brand) ||
+       (!combo.topper && !topper))
+    );
+  };
+
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (limit to 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        success('Image size must be less than 2MB. Please choose a smaller image.', 'File Too Large');
+        return;
+      }
+
       setPhotoFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -32,6 +51,24 @@ const PolishPicker = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const addTopperToResult = () => {
+    if (toppers.length === 0) {
+      success('Please add some toppers to your collection first!', 'No Toppers Available');
+      return;
+    }
+
+    const randomTopper = toppers[Math.floor(Math.random() * toppers.length)];
+    
+    const updatedCombination = {
+      ...currentCombination,
+      topper: randomTopper
+    };
+
+    setCurrentCombination(updatedCombination);
+    setResult(prev => ({ ...prev, topper: randomTopper }));
+    setShowAddTopper(false);
   };
 
   const handleSaveCombination = () => {
@@ -98,6 +135,9 @@ const PolishPicker = () => {
       selectedTopper = toppers[Math.floor(Math.random() * toppers.length)];
     }
 
+    // Check if this combination has been used before
+    const existingCombo = findExistingCombination(randomPolish, selectedTopper);
+    
     // Create combination but don't mark as used yet
     const combination = {
       id: Date.now(),
@@ -109,9 +149,13 @@ const PolishPicker = () => {
 
     setCurrentCombination(combination);
     setResult({ polish: randomPolish, topper: selectedTopper });
+    setExistingCombination(existingCombo);
     setIsUsed(false);
     setPhotoFile(null);
     setPhotoPreview(null);
+    
+    // Show add topper option if no topper was initially selected
+    setShowAddTopper(!filters.includeTopper && !selectedTopper && toppers.length > 0);
   };
 
   return (
@@ -181,6 +225,47 @@ const PolishPicker = () => {
                 <span className="brand">{result.topper.brand}</span>
                 <span className="formula-tag">{result.topper.type}</span>
               </div>
+            </div>
+          )}
+
+          {existingCombination && comboPhotos[existingCombination.id] && (
+            <div className="existing-combination-photo">
+              <h4 style={{ color: '#295982', marginBottom: '10px' }}>
+                ✨ You've used this combination before! Here's how it looked:
+              </h4>
+              <div className="photo-display">
+                <img 
+                  src={comboPhotos[existingCombination.id]} 
+                  alt="Previous combination photo" 
+                  style={{ 
+                    maxWidth: '300px', 
+                    maxHeight: '300px', 
+                    borderRadius: '12px',
+                    border: '3px solid #6FABD0',
+                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
+                  }} 
+                />
+                <p style={{ 
+                  fontSize: '0.9rem', 
+                  color: '#6c757d', 
+                  marginTop: '8px',
+                  fontStyle: 'italic'
+                }}>
+                  Used on {new Date(existingCombination.date).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {showAddTopper && (
+            <div className="add-topper-section">
+              <p>Want to add a topper to this polish?</p>
+              <button className="secondary-button" onClick={addTopperToResult}>
+                Add Random Topper
+              </button>
+              <button className="text-button" onClick={() => setShowAddTopper(false)}>
+                No, keep as is
+              </button>
             </div>
           )}
 

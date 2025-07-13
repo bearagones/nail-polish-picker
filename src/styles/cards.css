@@ -155,6 +155,37 @@
     display: inline-block;
 }
 
+/* Combination Cards - Improved Readability */
+.combination-card .brand {
+    background: rgba(41, 89, 130, 0.15);
+    color: #1e3f5a;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.combination-card .color-tag {
+    background: rgba(111, 171, 208, 0.15);
+    color: #1e3f5a;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.combination-card .formula-tag {
+    background: rgba(153, 206, 190, 0.15);
+    color: #1e3f5a;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
 .polish-item .collection-tag, .topper-item .collection-tag {
     background: rgba(71, 121, 119, 0.1);
     color: #477977;
@@ -184,14 +215,18 @@
 .combination-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.combination-title-section {
+    flex: 1;
 }
 
 .combination-polish {
     color: #295982;
     font-size: 1.2rem;
-    margin: 0;
+    margin: 0 0 5px 0;
 }
 
 .combination-date {
@@ -199,28 +234,65 @@
     font-size: 0.9rem;
 }
 
-.combination-details {
+.delete-button-inline {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.delete-button-inline:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.combination-content {
+    margin-bottom: 15px;
+}
+
+.polish-section {
     margin-bottom: 10px;
 }
 
-.combination-topper {
+.polish-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.topper-section {
     background: #e9ecef;
-    padding: 10px;
+    padding: 12px;
     border-radius: 8px;
-    margin: 10px 0;
+    margin-top: 10px;
 }
 
 .topper-label {
     font-weight: 600;
     color: #99CEBE;
+    margin-bottom: 5px;
 }
 
-.combination-actions {
-    margin-top: 15px;
-    text-align: right;
+.topper-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.topper-type {
+    background: rgba(153, 206, 190, 0.2) !important;
+    color: #2d5a57 !important;
+    font-weight: 600 !important;
 }
 
 /* Collection Button Spacing */
@@ -308,9 +380,98 @@
     margin: 15px 0;
 }
 
-.photo-display img {
+.photo-thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
+.photo-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
     border: 2px solid #e9ecef;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.photo-thumbnail:hover {
+    border-color: #6FABD0;
+    transform: scale(1.05);
+}
+
+.delete-photo-button {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.delete-photo-button:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.photo-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.photo-modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    cursor: default;
+}
+
+.photo-expanded {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.close-modal-button {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-modal-button:hover {
+    background: #c82333;
+    transform: scale(1.1);
 }
 
 .photo-upload {
@@ -320,13 +481,119 @@
 .photo-upload .photo-upload-label {
     background: transparent;
     color: #6FABD0;
-    padding: 5px 10px;
-    font-size: 0.9rem;
-    border: 1px solid #6FABD0;
-    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 1.2rem;
+    border: 2px dashed #6FABD0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
 }
 
 .photo-upload .photo-upload-label:hover {
     background: #6FABD0;
     color: white;
+    border-style: solid;
+}
+
+/* Add Topper Section */
+.add-topper-section {
+    background: #e9f7ef;
+    border: 2px dashed #28a745;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.add-topper-section p {
+    margin-bottom: 10px;
+    color: #155724;
+    font-weight: 500;
+}
+
+.secondary-button {
+    background: #295982;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+}
+
+.secondary-button:hover {
+    background: #1e3f5a;
+    transform: translateY(-2px);
+}
+
+.text-button {
+    background: transparent;
+    color: #6c757d;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.text-button:hover {
+    color: #495057;
+    background: #f8f9fa;
+}
+
+/* Scrollable Tab Content */
+.tab-content-scrollable {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-right: -10px;
+}
+
+.tab-content-scrollable::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tab-content-scrollable::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.tab-content-scrollable::-webkit-scrollbar-thumb {
+    background: #6FABD0;
+    border-radius: 4px;
+}
+
+.tab-content-scrollable::-webkit-scrollbar-thumb:hover {
+    background: #295982;
+}
+
+/* Collection Lists - Scrollable */
+.collection-content {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-right: -10px;
+}
+
+.collection-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.collection-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.collection-content::-webkit-scrollbar-thumb {
+    background: #6FABD0;
+    border-radius: 4px;
+}
+
+.collection-content::-webkit-scrollbar-thumb:hover {
+    background: #295982;
 }

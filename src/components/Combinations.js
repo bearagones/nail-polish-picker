@@ -6,6 +6,7 @@ const Combinations = () => {
   const { usedCombinations, comboPhotos, dispatch } = useData();
   const { confirm, success } = useModal();
   const [uploadingPhoto, setUploadingPhoto] = useState(null);
+  const [expandedImage, setExpandedImage] = useState(null);
 
   const handleDeleteCombination = async (id) => {
     const confirmed = await confirm('Are you sure you want to delete this combination?');
@@ -18,6 +19,12 @@ const Combinations = () => {
   const handlePhotoUpload = (e, comboId) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (limit to 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        success('Image size must be less than 2MB. Please choose a smaller image.', 'File Too Large');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         dispatch({ 
@@ -32,6 +39,18 @@ const Combinations = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleImageClick = (comboId) => {
+    setExpandedImage(expandedImage === comboId ? null : comboId);
+  };
+
+  const handleDeletePhoto = (comboId) => {
+    dispatch({ 
+      type: 'REMOVE_COMBO_PHOTO', 
+      payload: comboId.toString() 
+    });
+    success('Photo deleted successfully!');
   };
 
   // Filter to only show combinations that are marked as used
@@ -51,7 +70,7 @@ const Combinations = () => {
           No used combinations yet! Use the Polish Picker and check "I used this combination" to save combinations here.
         </p>
       ) : (
-        <div>
+        <div className="tab-content-scrollable">
           <p style={{ marginBottom: '20px', color: '#6c757d' }}>
             You have {usedCombinationsOnly.length} used combination{usedCombinationsOnly.length !== 1 ? 's' : ''}.
           </p>
@@ -61,45 +80,86 @@ const Combinations = () => {
             .map((combo) => (
               <div key={combo.id} className="combination-card">
                 <div className="combination-header">
-                  <h3 className="combination-polish">{combo.polish.name}</h3>
-                  <span className="combination-date">{formatDate(combo.date)}</span>
+                  <div className="combination-title-section">
+                    <h3 className="combination-polish">{combo.polish.name}</h3>
+                    <span className="combination-date">{formatDate(combo.date)}</span>
+                  </div>
+                  <button 
+                    className="delete-button-inline" 
+                    onClick={() => handleDeleteCombination(combo.id)}
+                    title="Delete combination"
+                  >
+                    ✕
+                  </button>
                 </div>
                 
-                <div className="combination-details">
-                  <span className="brand">{combo.polish.brand}</span>
-                  <span className="color-tag">{combo.polish.color}</span>
-                  <span className="formula-tag">{combo.polish.formula}</span>
-                </div>
-                
-                {combo.topper && (
-                  <div className="combination-topper">
-                    <div className="topper-label">With Topper:</div>
-                    <div style={{ marginTop: '5px' }}>
-                      <strong>{combo.topper.name}</strong> by {combo.topper.brand}
-                      <span className="formula-tag" style={{ marginLeft: '10px' }}>
-                        {combo.topper.type}
-                      </span>
+                <div className="combination-content">
+                  <div className="polish-section">
+                    <div className="polish-details">
+                      <span className="brand">{combo.polish.brand}</span>
+                      <span className="color-tag">{combo.polish.color}</span>
+                      <span className="formula-tag">{combo.polish.formula}</span>
                     </div>
                   </div>
-                )}
+                  
+                  {combo.topper && (
+                    <div className="topper-section">
+                      <div className="topper-label">+ Topper:</div>
+                      <div className="topper-info">
+                        <strong>{combo.topper.name}</strong> by {combo.topper.brand}
+                        <span className="formula-tag topper-type">
+                          {combo.topper.type}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className="combination-photo">
                   {comboPhotos[combo.id] ? (
                     <div className="photo-display">
-                      <img 
-                        src={comboPhotos[combo.id]} 
-                        alt="Combination photo" 
-                        style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px', marginTop: '10px' }}
-                      />
+                      <div className="photo-thumbnail-container">
+                        <img 
+                          src={comboPhotos[combo.id]} 
+                          alt="Combination photo" 
+                          className="photo-thumbnail"
+                          onClick={() => handleImageClick(combo.id)}
+                          title="Click to expand"
+                        />
+                        <button 
+                          className="delete-photo-button"
+                          onClick={() => handleDeletePhoto(combo.id)}
+                          title="Delete photo"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      
+                      {expandedImage === combo.id && (
+                        <div className="photo-modal" onClick={() => setExpandedImage(null)}>
+                          <div className="photo-modal-content" onClick={(e) => e.stopPropagation()}>
+                            <img 
+                              src={comboPhotos[combo.id]} 
+                              alt="Combination photo expanded" 
+                              className="photo-expanded"
+                            />
+                            <button 
+                              className="close-modal-button"
+                              onClick={() => setExpandedImage(null)}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="photo-upload">
                       <label 
                         htmlFor={`photo-upload-${combo.id}`} 
                         className="photo-upload-label"
-                        style={{ cursor: 'pointer', color: '#6FABD0', textDecoration: 'underline' }}
                       >
-                        📷 Add Photo
+                        📷
                       </label>
                       <input
                         id={`photo-upload-${combo.id}`}
@@ -110,15 +170,6 @@ const Combinations = () => {
                       />
                     </div>
                   )}
-                </div>
-                
-                <div className="combination-actions">
-                  <button 
-                    className="delete-button" 
-                    onClick={() => handleDeleteCombination(combo.id)}
-                  >
-                    Delete
-                  </button>
                 </div>
               </div>
             ))}

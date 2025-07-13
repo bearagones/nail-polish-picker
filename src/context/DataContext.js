@@ -58,6 +58,9 @@ function dataReducer(state, action) {
       return { ...state, customTopperTypes: state.customTopperTypes.filter(t => t !== action.payload) };
     case 'SAVE_COMBO_PHOTO':
       return { ...state, comboPhotos: { ...state.comboPhotos, [action.payload.key]: action.payload.photo } };
+    case 'REMOVE_COMBO_PHOTO':
+      const { [action.payload]: removed, ...remainingPhotos } = state.comboPhotos;
+      return { ...state, comboPhotos: remainingPhotos };
     case 'RESET_DATA':
       return initialState;
     default:
