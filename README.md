@@ -64,12 +64,48 @@ npm start
 
 The app will open at [http://localhost:3000](http://localhost:3000)
 
+## Deployment
+
+### Vercel Deployment
+
+1. **Push to GitHub:**
+   ```bash
+   git add .
+   git commit -m "Ready for deployment"
+   git push origin main
+   ```
+
+2. **Deploy on Vercel:**
+   - Go to [Vercel](https://vercel.com)
+   - Import your GitHub repository
+   - Framework Preset: **Create React App**
+   - Root Directory: `./`
+   - Build Command: `npm run build` (should auto-detect)
+   - Output Directory: `build` (should auto-detect)
+
+3. **Set Environment Variables in Vercel:**
+   - Go to your project settings in Vercel
+   - Navigate to "Environment Variables"
+   - Add each variable from your `.env` file:
+     ```
+     REACT_APP_FIREBASE_API_KEY = your_actual_api_key
+     REACT_APP_FIREBASE_AUTH_DOMAIN = your_project_id.firebaseapp.com
+     REACT_APP_FIREBASE_PROJECT_ID = your_project_id
+     REACT_APP_FIREBASE_STORAGE_BUCKET = your_project_id.firebasestorage.app
+     REACT_APP_FIREBASE_MESSAGING_SENDER_ID = your_messaging_sender_id
+     REACT_APP_FIREBASE_APP_ID = your_app_id
+     ```
+
+4. **Redeploy:**
+   - After adding environment variables, trigger a new deployment
+
 ## Security Notes
 
 - **Never commit your `.env` file** - it contains sensitive Firebase keys
 - The `.env` file is already included in `.gitignore`
 - Use `.env.example` as a template for other developers
-- For production deployment, set environment variables in your hosting platform
+- For production deployment, set environment variables in your hosting platform (Vercel, Netlify, etc.)
+- Your Firebase API keys are safe to expose in client-side code as they're designed for public use, but domain restrictions should be configured in Firebase Console
 
 ## Technologies Used
 
