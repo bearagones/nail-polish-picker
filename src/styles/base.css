@@ -235,3 +235,28 @@ body.dark-mode .stat-card p {
     color: #e8e6e3;
     opacity: 0.9;
 }
+
+/* Dark mode collection item tags */
+body.dark-mode .polish-item .brand,
+body.dark-mode .topper-item .brand {
+    background: rgba(138, 184, 218, 0.2);
+    color: #8ab8da;
+}
+
+body.dark-mode .polish-item .color-tag,
+body.dark-mode .topper-item .color-tag {
+    background: rgba(138, 184, 218, 0.15);
+    color: #8ab8da;
+}
+
+body.dark-mode .polish-item .formula-tag,
+body.dark-mode .topper-item .formula-tag {
+    background: rgba(138, 184, 218, 0.1);
+    color: #8ab8da;
+}
+
+body.dark-mode .polish-item .collection-tag,
+body.dark-mode .topper-item .collection-tag {
+    background: rgba(71, 121, 119, 0.3);
+    color: #99CEBE;
+}

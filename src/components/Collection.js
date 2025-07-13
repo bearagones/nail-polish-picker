@@ -8,7 +8,7 @@ const Collection = () => {
   
   const [showAddPolish, setShowAddPolish] = useState(false);
   const [showAddTopper, setShowAddTopper] = useState(false);
-  const [newPolish, setNewPolish] = useState({ name: '', brand: '', color: '', formula: '' });
+  const [newPolish, setNewPolish] = useState({ name: '', brand: '', color: '', formula: '', collection: '' });
   const [newTopper, setNewTopper] = useState({ name: '', brand: '', type: '' });
 
   const handleAddPolish = (e) => {
@@ -19,7 +19,7 @@ const Collection = () => {
     }
     
     dispatch({ type: 'ADD_POLISH', payload: newPolish });
-    setNewPolish({ name: '', brand: '', color: '', formula: '' });
+    setNewPolish({ name: '', brand: '', color: '', formula: '', collection: '' });
     setShowAddPolish(false);
     success('Polish added successfully!');
   };
@@ -160,6 +160,15 @@ const Collection = () => {
               />
             )}
           </div>
+          <div className="form-group">
+            <label>Collection (Optional):</label>
+            <input
+              type="text"
+              value={newPolish.collection}
+              onChange={(e) => setNewPolish(prev => ({ ...prev, collection: e.target.value }))}
+              placeholder="e.g., Summer 2024, Holiday Collection"
+            />
+          </div>
           <div className="form-buttons">
             <button type="button" className="cancel-button" onClick={() => setShowAddPolish(false)}>
               Cancel
@@ -248,6 +257,7 @@ const Collection = () => {
                   <span className="brand">{polish.brand}</span>
                   <span className="color-tag">{polish.color}</span>
                   <span className="formula-tag">{polish.formula}</span>
+                  {polish.collection && <span className="collection-tag">{polish.collection}</span>}
                 </div>
                 <button 
                   className="delete-button" 

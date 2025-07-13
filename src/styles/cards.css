@@ -126,8 +126,43 @@
 }
 
 .polish-item .brand, .topper-item .brand {
-    font-size: 0.8rem;
-    margin-bottom: 10px;
+    background: rgba(41, 89, 130, 0.1);
+    color: #295982;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.polish-item .color-tag, .topper-item .color-tag {
+    background: rgba(111, 171, 208, 0.1);
+    color: #295982;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.polish-item .formula-tag, .topper-item .formula-tag {
+    background: rgba(153, 206, 190, 0.1);
+    color: #295982;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.polish-item .collection-tag, .topper-item .collection-tag {
+    background: rgba(71, 121, 119, 0.1);
+    color: #477977;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
 }
 
 /* Combination Cards */
