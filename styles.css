@@ -1,0 +1,466 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7, #D7F0E9, #B0D5C7, #477977);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #99CEBE, #BDE6E2, #4E997A);
+    padding: 40px 30px;
+    text-align: center;
+    color: white;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.filters {
+    padding: 30px;
+    background: #f8f9fa;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+    transition: border-color 0.3s ease;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #6FABD0;
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: #333;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    accent-color: #6FABD0;
+}
+
+.pick-button {
+    width: calc(100% - 60px);
+    margin: 0 30px 30px;
+    padding: 16px;
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7, #B0D5C7, #477977);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pick-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.pick-button:active {
+    transform: translateY(0);
+}
+
+.result {
+    padding: 30px;
+    border-top: 1px solid #e9ecef;
+}
+
+.result.hidden {
+    display: none;
+}
+
+.polish-card {
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7, #6FABD0, #477977);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.polish-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.polish-details {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.color-tag {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.formula-tag {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.description {
+    font-size: 1rem;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+.topper-card {
+    background: linear-gradient(135deg, #99CEBE, #BDE6E2, #4E997A);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.topper-card.hidden {
+    display: none;
+}
+
+.topper-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.topper-details {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.secondary-button {
+    width: calc(100% - 60px);
+    margin: 20px 30px;
+    padding: 12px;
+    background: transparent;
+    color: #295982;
+    border: 2px solid #295982;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+    background: #295982;
+    color: white;
+}
+
+.secondary-button.hidden {
+    display: none;
+}
+
+.add-polish-toggle,
+.add-topper-toggle {
+    width: calc(100% - 60px);
+    margin: 10px 30px;
+    padding: 12px;
+    background: transparent;
+    color: #6FABD0;
+    border: 2px solid #6FABD0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-topper-toggle {
+    color: #99CEBE;
+    border-color: #99CEBE;
+}
+
+.add-polish-toggle:hover {
+    background: #6FABD0;
+    color: white;
+}
+
+.add-topper-toggle:hover {
+    background: #99CEBE;
+    color: white;
+}
+
+.add-polish-form,
+.add-topper-form {
+    padding: 30px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.add-polish-form.hidden,
+.add-topper-form.hidden {
+    display: none;
+}
+
+.add-polish-form h3,
+.add-topper-form h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #295982;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.save-button {
+    flex: 1;
+    padding: 12px;
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7, #B0D5C7, #477977);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.cancel-button {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    color: #6c757d;
+    border: 2px solid #6c757d;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-button:hover {
+    background: #6c757d;
+    color: white;
+}
+
+/* Photo upload styles */
+.combo-photo-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.existing-photo {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.existing-photo.hidden {
+    display: none;
+}
+
+.existing-photo h4 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.combo-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.upload-photo-section {
+    text-align: center;
+}
+
+.upload-photo-section h4 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.photo-upload {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.photo-upload:hover {
+    border-color: #295982;
+}
+
+.save-photo-button {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #295982, #6FABD0);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.save-photo-button:hover {
+    transform: translateY(-1px);
+}
+
+.save-photo-button.hidden {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 10px;
+        border-radius: 15px;
+    }
+    
+    header {
+        padding: 30px 20px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .filters {
+        padding: 20px;
+    }
+    
+    .pick-button {
+        width: calc(100% - 40px);
+        margin: 0 20px 20px;
+    }
+    
+    .result {
+        padding: 20px;
+    }
+    
+    .polish-details,
+    .topper-details {
+        flex-direction: column;
+        align-items: center;
+    }
+}

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nail Polish Picker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="nail polish icon.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nail Polish Picker</h1>
+            <p>Let me help you choose the perfect nail polish!</p>
+        </header>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="color-filter">Color Group:</label>
+                <select id="color-filter">
+                    <option value="">Any Color</option>
+                    <option value="red">Red</option>
+                    <option value="orange">Orange</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                    <option value="purple">Purple</option>
+                    <option value="pink">Pink</option>
+                    <option value="nude">Nude</option>
+                    <option value="black">Black</option>
+                    <option value="brown">Brown</option>
+                    <option value="grey">Grey</option>
+                    <option value="white">White</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="formula-filter">Formula Type:</label>
+                <select id="formula-filter">
+                    <option value="">Any Formula</option>
+                    <option value="creme">Creme</option>
+                    <option value="shimmer">Shimmer</option>
+                    <option value="glitter">Glitter</option>
+                    <option value="metallic">Metallic</option>
+                    <option value="holographic">Holographic</option>
+                    <option value="chrome">Chrome</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="topper-checkbox">
+                    Add a topper
+                </label>
+            </div>
+        </div>
+
+        <button id="pick-button" class="pick-button">Pick My Polish!</button>
+
+        <div id="result" class="result hidden">
+            <div class="polish-card">
+                <h2 id="polish-name"></h2>
+                <div class="polish-details">
+                    <span id="polish-brand" class="brand"></span>
+                    <span id="polish-color" class="color-tag"></span>
+                    <span id="polish-formula" class="formula-tag"></span>
+                </div>
+            </div>
+            
+            <div id="topper-result" class="topper-card hidden">
+                <h3>+ Topper Suggestion</h3>
+                <div class="topper-details">
+                    <span id="topper-name"></span>
+                    <span id="topper-brand" class="brand"></span>
+                    <span id="topper-type" class="formula-tag"></span>
+                </div>
+            </div>
+
+            <!-- Photo section for combinations -->
+            <div id="combo-photo-section" class="combo-photo-section">
+                <div id="existing-photo" class="existing-photo hidden">
+                    <h4>Previous Photo of This Combination:</h4>
+                    <img id="combo-image" src="" alt="Nail polish combination" class="combo-image">
+                </div>
+                
+                <div id="upload-photo-section" class="upload-photo-section">
+                    <h4>Upload a Photo of This Combination:</h4>
+                    <input type="file" id="photo-upload" accept="image/*" class="photo-upload">
+                    <button id="save-photo" class="save-photo-button hidden">Save Photo</button>
+                </div>
+            </div>
+        </div>
+
+        <button id="pick-again" class="secondary-button hidden">Pick Again</button>
+        
+        <button id="add-polish-toggle" class="add-polish-toggle">+ Add New Polish</button>
+        <button id="add-topper-toggle" class="add-topper-toggle">+ Add New Topper</button>
+        
+        <div id="add-polish-form" class="add-polish-form hidden">
+            <h3>Add New Nail Polish</h3>
+            <div class="form-group">
+                <label for="new-polish-name">Polish Name:</label>
+                <input type="text" id="new-polish-name" placeholder="e.g., Ruby Red Romance">
+            </div>
+            <div class="form-group">
+                <label for="new-polish-brand">Brand:</label>
+                <input type="text" id="new-polish-brand" placeholder="e.g., OPI, Essie, Sally Hansen">
+            </div>
+            <div class="form-group">
+                <label for="new-polish-color">Color Group:</label>
+                <select id="new-polish-color">
+                    <option value="red">Red</option>
+                    <option value="orange">Orange</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                    <option value="purple">Purple</option>
+                    <option value="pink">Pink</option>
+                    <option value="nude">Nude</option>
+                    <option value="black">Black</option>
+                    <option value="brown">Brown</option>
+                    <option value="grey">Grey</option>
+                    <option value="white">White</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="new-polish-formula">Formula Type:</label>
+                <select id="new-polish-formula">
+                    <option value="creme">Creme</option>
+                    <option value="shimmer">Shimmer</option>
+                    <option value="glitter">Glitter</option>
+                    <option value="metallic">Metallic</option>
+                    <option value="holographic">Holographic</option>
+                    <option value="chrome">Chrome</option>
+                </select>
+            </div>
+            <div class="form-buttons">
+                <button id="save-polish" class="save-button">Save Polish</button>
+                <button id="cancel-add" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+
+        <div id="add-topper-form" class="add-topper-form hidden">
+            <h3>Add New Topper</h3>
+            <div class="form-group">
+                <label for="new-topper-name">Topper Name:</label>
+                <input type="text" id="new-topper-name" placeholder="e.g., Diamond Dust, Holographic Dreams">
+            </div>
+            <div class="form-group">
+                <label for="new-topper-brand">Brand:</label>
+                <input type="text" id="new-topper-brand" placeholder="e.g., OPI, Essie, Sally Hansen">
+            </div>
+            <div class="form-group">
+                <label for="new-topper-type">Topper Type:</label>
+                <select id="new-topper-type">
+                    <option value="glossy">Glossy</option>
+                    <option value="matte">Matte</option>
+                    <option value="glitter">Glitter</option>
+                    <option value="shimmer">Shimmer</option>
+                    <option value="holographic">Holographic</option>
+                    <option value="chrome">Chrome</option>
+                </select>
+            </div>
+            <div class="form-buttons">
+                <button id="save-topper" class="save-button">Save Topper</button>
+                <button id="cancel-add-topper" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
