@@ -329,6 +329,16 @@ const Login = ({ onLogin }) => {
               <div className="demo-note">
                 <p><strong>Firebase Integration:</strong> This app uses Firebase Authentication and Firestore for secure user accounts and data storage across devices.</p>
               </div>
+
+              <div className="skip-option">
+                <button 
+                  type="button" 
+                  className="skip-button"
+                  onClick={() => onLogin(null)}
+                >
+                  Skip for now (Use without account)
+                </button>
+              </div>
             </>
           )}
         </div>

@@ -324,3 +324,44 @@ body.dark-mode .demo-note p {
 body.dark-mode .demo-note strong {
     color: #8ab8da;
 }
+
+/* Skip Button Styles */
+.skip-option {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.skip-button {
+    background: transparent;
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.skip-button:hover {
+    background: #6c757d;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Dark Mode Skip Button */
+body.dark-mode .skip-option {
+    border-top-color: #353a3c;
+}
+
+body.dark-mode .skip-button {
+    border-color: #c8c3bc;
+    color: #c8c3bc;
+}
+
+body.dark-mode .skip-button:hover {
+    background: #c8c3bc;
+    color: #181a1b;
+}

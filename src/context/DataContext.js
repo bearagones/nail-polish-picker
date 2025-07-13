@@ -35,6 +35,13 @@ function dataReducer(state, action) {
       return { ...state, toppers: state.toppers.filter(t => !(t.name === action.payload.name && t.brand === action.payload.brand)) };
     case 'ADD_COMBINATION':
       return { ...state, usedCombinations: [...state.usedCombinations, action.payload] };
+    case 'UPDATE_COMBINATION':
+      return { 
+        ...state, 
+        usedCombinations: state.usedCombinations.map(c => 
+          c.id === action.payload.id ? { ...c, ...action.payload.updates } : c
+        )
+      };
     case 'REMOVE_COMBINATION':
       return { ...state, usedCombinations: state.usedCombinations.filter(c => c.id !== action.payload) };
     case 'ADD_CUSTOM_COLOR':

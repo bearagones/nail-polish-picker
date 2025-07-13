@@ -235,3 +235,98 @@
     flex: 0 1 auto;
     min-width: 120px;
 }
+
+/* Photo Upload and Combination Actions */
+.combination-actions {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 2px dashed #e9ecef;
+}
+
+.photo-upload-section {
+    margin-bottom: 15px;
+}
+
+.photo-upload-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #6FABD0;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.photo-upload-label:hover {
+    background: #295982;
+}
+
+.photo-preview {
+    margin-top: 10px;
+}
+
+.photo-preview img {
+    border: 2px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.used-checkbox {
+    margin-bottom: 15px;
+}
+
+.used-checkbox .checkbox-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #295982;
+}
+
+.save-combination-button {
+    background: linear-gradient(135deg, #295982, #6FABD0);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.save-combination-button:hover {
+    background: linear-gradient(135deg, #1e3f5a, #295982);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Combination Photo Display */
+.combination-photo {
+    margin: 15px 0;
+}
+
+.photo-display img {
+    border: 2px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.photo-upload {
+    padding: 10px 0;
+}
+
+.photo-upload .photo-upload-label {
+    background: transparent;
+    color: #6FABD0;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border: 1px solid #6FABD0;
+    border-radius: 5px;
+}
+
+.photo-upload .photo-upload-label:hover {
+    background: #6FABD0;
+    color: white;
+}

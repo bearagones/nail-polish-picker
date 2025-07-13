@@ -13,9 +13,54 @@ const PolishPicker = () => {
   });
   
   const [result, setResult] = useState(null);
+  const [currentCombination, setCurrentCombination] = useState(null);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [isUsed, setIsUsed] = useState(false);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPhotoPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveCombination = () => {
+    if (!currentCombination) return;
+
+    const updatedCombination = {
+      ...currentCombination,
+      used: isUsed
+    };
+
+    // Save the combination
+    dispatch({ type: 'ADD_COMBINATION', payload: updatedCombination });
+
+    // Save photo if uploaded
+    if (photoPreview && isUsed) {
+      dispatch({ 
+        type: 'SAVE_COMBO_PHOTO', 
+        payload: { 
+          key: currentCombination.id.toString(), 
+          photo: photoPreview 
+        } 
+      });
+    }
+
+    if (isUsed) {
+      success('Combination saved to Recent Combinations!');
+    } else {
+      success('Combination generated! Check "I used this combination" to save it to Recent Combinations.');
+    }
   };
 
   const pickRandomPolish = () => {
@@ -53,17 +98,20 @@ const PolishPicker = () => {
       selectedTopper = toppers[Math.floor(Math.random() * toppers.length)];
     }
 
-    // Save combination
+    // Create combination but don't mark as used yet
     const combination = {
       id: Date.now(),
       polish: randomPolish,
       topper: selectedTopper,
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
+      used: false
     };
 
-    dispatch({ type: 'ADD_COMBINATION', payload: combination });
-
+    setCurrentCombination(combination);
     setResult({ polish: randomPolish, topper: selectedTopper });
+    setIsUsed(false);
+    setPhotoFile(null);
+    setPhotoPreview(null);
   };
 
   return (
@@ -135,6 +183,41 @@ const PolishPicker = () => {
               </div>
             </div>
           )}
+
+          <div className="combination-actions">
+            <div className="photo-upload-section">
+              <label htmlFor="photo-upload" className="photo-upload-label">
+                📷 Upload Photo (Optional)
+              </label>
+              <input
+                id="photo-upload"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                style={{ display: 'none' }}
+              />
+              {photoPreview && (
+                <div className="photo-preview">
+                  <img src={photoPreview} alt="Combination preview" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }} />
+                </div>
+              )}
+            </div>
+
+            <div className="used-checkbox">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={isUsed}
+                  onChange={(e) => setIsUsed(e.target.checked)}
+                />
+                I used this combination
+              </label>
+            </div>
+
+            <button className="save-combination-button" onClick={handleSaveCombination}>
+              {isUsed ? 'Save to Recent Combinations' : 'Generate Another'}
+            </button>
+          </div>
         </div>
       )}
     </div>
