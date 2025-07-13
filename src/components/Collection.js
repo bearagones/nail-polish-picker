@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useData } from '../context/DataContext';
 import { useModal } from '../context/ModalContext';
 
@@ -9,7 +9,72 @@ const Collection = () => {
   const [showAddPolish, setShowAddPolish] = useState(false);
   const [showAddTopper, setShowAddTopper] = useState(false);
   const [newPolish, setNewPolish] = useState({ name: '', brand: '', color: '', formula: '', collection: '' });
-  const [newTopper, setNewTopper] = useState({ name: '', brand: '', type: '' });
+  const [newTopper, setNewTopper] = useState({ name: '', brand: '', type: '', collection: '' });
+  
+  // Sort and search states
+  const [polishSortBy, setPolishSortBy] = useState('date-newest');
+  const [topperSortBy, setTopperSortBy] = useState('date-newest');
+  const [polishSearchTerm, setPolishSearchTerm] = useState('');
+  const [topperSearchTerm, setTopperSearchTerm] = useState('');
+
+  // Color order for sorting
+  const colorOrder = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'nude', 'black', 'brown', 'grey', 'white'];
+
+  // Sorting function
+  const sortItems = (items, sortBy) => {
+    const sorted = [...items];
+    
+    switch (sortBy) {
+      case 'date-newest':
+        return sorted.reverse(); // Newest first (reverse of addition order)
+      case 'date-oldest':
+        return sorted; // Oldest first (original addition order)
+      case 'name':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      case 'brand':
+        return sorted.sort((a, b) => a.brand.localeCompare(b.brand));
+      case 'color':
+        return sorted.sort((a, b) => {
+          const aIndex = colorOrder.indexOf(a.color?.toLowerCase()) ?? 999;
+          const bIndex = colorOrder.indexOf(b.color?.toLowerCase()) ?? 999;
+          return aIndex - bIndex;
+        });
+      case 'collection':
+        return sorted.sort((a, b) => {
+          const aCollection = a.collection || 'zzz'; // Put items without collection at end
+          const bCollection = b.collection || 'zzz';
+          return aCollection.localeCompare(bCollection);
+        });
+      default:
+        return sorted;
+    }
+  };
+
+  // Filter function
+  const filterItems = (items, searchTerm) => {
+    if (!searchTerm) return items;
+    
+    const term = searchTerm.toLowerCase();
+    return items.filter(item => 
+      item.name.toLowerCase().includes(term) ||
+      item.brand.toLowerCase().includes(term) ||
+      item.color?.toLowerCase().includes(term) ||
+      item.formula?.toLowerCase().includes(term) ||
+      item.type?.toLowerCase().includes(term) ||
+      item.collection?.toLowerCase().includes(term)
+    );
+  };
+
+  // Memoized sorted and filtered lists
+  const sortedAndFilteredPolishes = useMemo(() => {
+    const filtered = filterItems(nailPolishes, polishSearchTerm);
+    return sortItems(filtered, polishSortBy);
+  }, [nailPolishes, polishSortBy, polishSearchTerm]);
+
+  const sortedAndFilteredToppers = useMemo(() => {
+    const filtered = filterItems(toppers, topperSearchTerm);
+    return sortItems(filtered, topperSortBy);
+  }, [toppers, topperSortBy, topperSearchTerm]);
 
   const handleAddPolish = (e) => {
     e.preventDefault();
@@ -32,7 +97,7 @@ const Collection = () => {
     }
     
     dispatch({ type: 'ADD_TOPPER', payload: newTopper });
-    setNewTopper({ name: '', brand: '', type: '' });
+    setNewTopper({ name: '', brand: '', type: '', collection: '' });
     setShowAddTopper(false);
     success('Topper added successfully!');
   };
@@ -233,6 +298,15 @@ const Collection = () => {
               />
             )}
           </div>
+          <div className="form-group">
+            <label>Collection (Optional):</label>
+            <input
+              type="text"
+              value={newTopper.collection}
+              onChange={(e) => setNewTopper(prev => ({ ...prev, collection: e.target.value }))}
+              placeholder="e.g., Summer 2024, Holiday Collection"
+            />
+          </div>
           <div className="form-buttons">
             <button type="button" className="cancel-button" onClick={() => setShowAddTopper(false)}>
               Cancel
@@ -249,26 +323,51 @@ const Collection = () => {
         {nailPolishes.length === 0 ? (
           <p className="empty-message">No polishes in your collection yet. Add some above!</p>
         ) : (
-          <div className="polish-list">
-            {nailPolishes.map((polish, index) => (
-              <div key={index} className="polish-item">
-                <h4>{polish.name}</h4>
-                <div className="polish-details">
-                  <span className="brand">{polish.brand}</span>
-                  <span className="color-tag">{polish.color}</span>
-                  <span className="formula-tag">{polish.formula}</span>
-                  {polish.collection && <span className="collection-tag">{polish.collection}</span>}
-                </div>
-                <button 
-                  className="delete-button" 
-                  onClick={() => handleDeletePolish(polish)}
-                  style={{ marginTop: '10px' }}
+          <>
+            <div className="collection-controls">
+              <div className="search-sort-row">
+                <input
+                  type="text"
+                  placeholder="Search polishes..."
+                  value={polishSearchTerm}
+                  onChange={(e) => setPolishSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+                <select
+                  value={polishSortBy}
+                  onChange={(e) => setPolishSortBy(e.target.value)}
+                  className="sort-select"
                 >
-                  Delete
-                </button>
+                  <option value="date-newest">Newest First</option>
+                  <option value="date-oldest">Oldest First</option>
+                  <option value="name">Name (A-Z)</option>
+                  <option value="brand">Brand (A-Z)</option>
+                  <option value="color">Color</option>
+                  <option value="collection">Collection (A-Z)</option>
+                </select>
               </div>
-            ))}
-          </div>
+            </div>
+            <div className="polish-list">
+              {sortedAndFilteredPolishes.map((polish, index) => (
+                <div key={index} className="polish-item">
+                  <h4>{polish.name}</h4>
+                  <div className="polish-details">
+                    <span className="brand">{polish.brand}</span>
+                    <span className="color-tag">{polish.color}</span>
+                    <span className="formula-tag">{polish.formula}</span>
+                    {polish.collection && <span className="collection-tag">{polish.collection}</span>}
+                  </div>
+                  <button 
+                    className="delete-button" 
+                    onClick={() => handleDeletePolish(polish)}
+                    style={{ marginTop: '10px' }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
@@ -277,24 +376,49 @@ const Collection = () => {
         {toppers.length === 0 ? (
           <p className="empty-message">No toppers in your collection yet. Add some above!</p>
         ) : (
-          <div className="topper-list">
-            {toppers.map((topper, index) => (
-              <div key={index} className="topper-item">
-                <h4>{topper.name}</h4>
-                <div className="topper-details">
-                  <span className="brand">{topper.brand}</span>
-                  <span className="formula-tag">{topper.type}</span>
-                </div>
-                <button 
-                  className="delete-button" 
-                  onClick={() => handleDeleteTopper(topper)}
-                  style={{ marginTop: '10px' }}
+          <>
+            <div className="collection-controls">
+              <div className="search-sort-row">
+                <input
+                  type="text"
+                  placeholder="Search toppers..."
+                  value={topperSearchTerm}
+                  onChange={(e) => setTopperSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+                <select
+                  value={topperSortBy}
+                  onChange={(e) => setTopperSortBy(e.target.value)}
+                  className="sort-select"
                 >
-                  Delete
-                </button>
+                  <option value="date-newest">Newest First</option>
+                  <option value="date-oldest">Oldest First</option>
+                  <option value="name">Name (A-Z)</option>
+                  <option value="brand">Brand (A-Z)</option>
+                  <option value="collection">Collection (A-Z)</option>
+                </select>
               </div>
-            ))}
-          </div>
+            </div>
+            <div className="topper-list">
+              {sortedAndFilteredToppers.map((topper, index) => (
+                <div key={index} className="topper-item">
+                  <h4>{topper.name}</h4>
+                  <div className="topper-details">
+                    <span className="brand">{topper.brand}</span>
+                    <span className="formula-tag">{topper.type}</span>
+                    {topper.collection && <span className="collection-tag">{topper.collection}</span>}
+                  </div>
+                  <button 
+                    className="delete-button" 
+                    onClick={() => handleDeleteTopper(topper)}
+                    style={{ marginTop: '10px' }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>
