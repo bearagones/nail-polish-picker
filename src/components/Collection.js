@@ -348,27 +348,28 @@ const Collection = () => {
               </div>
             </div>
             <div className="collection-content">
-              <div className="polish-list">
-                {sortedAndFilteredPolishes.map((polish, index) => (
-                  <div key={index} className="polish-item">
-                    <h4>{polish.name}</h4>
-                    <div className="polish-details">
-                      <span className="brand">{polish.brand}</span>
-                      <span className="color-tag">{polish.color}</span>
-                      <span className="formula-tag">{polish.formula}</span>
-                      {polish.collection && <span className="collection-tag">{polish.collection}</span>}
+                <div className="polish-list">
+                  {sortedAndFilteredPolishes.map((polish, index) => (
+                    <div key={index} className="polish-item">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h4>{polish.name}</h4>
+                        <button 
+                          className="delete-button-inline" 
+                          onClick={() => handleDeletePolish(polish)}
+                          title="Delete polish"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <div className="polish-details">
+                        <span className="brand">{polish.brand}</span>
+                        <span className="color-tag">{polish.color}</span>
+                        <span className="formula-tag">{polish.formula}</span>
+                        {polish.collection && <span className="collection-tag">{polish.collection}</span>}
+                      </div>
                     </div>
-                    <button 
-                      className="delete-button-inline" 
-                      onClick={() => handleDeletePolish(polish)}
-                      title="Delete polish"
-                      style={{ marginTop: '10px' }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
             </div>
           </>
         )}
@@ -406,20 +407,21 @@ const Collection = () => {
               <div className="topper-list">
                 {sortedAndFilteredToppers.map((topper, index) => (
                   <div key={index} className="topper-item">
-                    <h4>{topper.name}</h4>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <h4>{topper.name}</h4>
+                      <button 
+                        className="delete-button-inline" 
+                        onClick={() => handleDeleteTopper(topper)}
+                        title="Delete topper"
+                      >
+                        ×
+                      </button>
+                    </div>
                     <div className="topper-details">
                       <span className="brand">{topper.brand}</span>
                       <span className="formula-tag">{topper.type}</span>
                       {topper.collection && <span className="collection-tag">{topper.collection}</span>}
                     </div>
-                    <button 
-                      className="delete-button-inline" 
-                      onClick={() => handleDeleteTopper(topper)}
-                      title="Delete topper"
-                      style={{ marginTop: '10px' }}
-                    >
-                      ×
-                    </button>
                   </div>
                 ))}
               </div>
