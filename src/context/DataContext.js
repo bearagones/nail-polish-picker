@@ -1,5 +1,13 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { 
+  addPolishToCollection, 
+  removePolishFromCollection, 
+  addTopperToCollection, 
+  removeTopperFromCollection,
+  addRecentCombination,
+  removeRecentCombination
+} from '../firebase/firestore';
 
 const initialState = {
   nailPolishes: [],
@@ -72,6 +80,58 @@ export const DataProvider = ({ children }) => {
   const [state, dispatch] = useReducer(dataReducer, initialState);
   const { user, isAuthenticated } = useAuth();
 
+  // Enhanced dispatch that syncs with Firebase for authenticated users
+  const enhancedDispatch = async (action) => {
+    // First update local state
+    dispatch(action);
+
+    // Then sync with Firebase if authenticated
+    if (isAuthenticated && user?.uid) {
+      try {
+        switch (action.type) {
+          case 'ADD_POLISH':
+            await addPolishToCollection(user.uid, action.payload);
+            break;
+          case 'REMOVE_POLISH':
+            // Find the polish ID to remove
+            const polishToRemove = state.nailPolishes.find(p => 
+              p.name === action.payload.name && p.brand === action.payload.brand
+            );
+            if (polishToRemove?.id) {
+              await removePolishFromCollection(user.uid, polishToRemove.id);
+            }
+            break;
+          case 'ADD_TOPPER':
+            await addTopperToCollection(user.uid, action.payload);
+            break;
+          case 'REMOVE_TOPPER':
+            // Find the topper ID to remove
+            const topperToRemove = state.toppers.find(t => 
+              t.name === action.payload.name && t.brand === action.payload.brand
+            );
+            if (topperToRemove?.id) {
+              await removeTopperFromCollection(user.uid, topperToRemove.id);
+            }
+            break;
+          case 'ADD_COMBINATION':
+            if (action.payload.used) {
+              await addRecentCombination(user.uid, action.payload);
+            }
+            break;
+          case 'REMOVE_COMBINATION':
+            await removeRecentCombination(user.uid, action.payload);
+            break;
+          default:
+            // For other actions, we don't need Firebase sync yet
+            break;
+        }
+      } catch (error) {
+        console.error('Firebase sync error:', error);
+        // You might want to show an error message to the user here
+      }
+    }
+  };
+
   // Load data - Firebase if authenticated, localStorage if not
   useEffect(() => {
     if (isAuthenticated && user?.polishCollection) {
@@ -127,7 +187,7 @@ export const DataProvider = ({ children }) => {
 
   const value = {
     ...state,
-    dispatch,
+    dispatch: enhancedDispatch,
     getAllColors,
     getAllFormulas,
     getAllTopperTypes

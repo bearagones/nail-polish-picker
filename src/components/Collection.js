@@ -359,11 +359,12 @@ const Collection = () => {
                       {polish.collection && <span className="collection-tag">{polish.collection}</span>}
                     </div>
                     <button 
-                      className="delete-button" 
+                      className="delete-button-inline" 
                       onClick={() => handleDeletePolish(polish)}
+                      title="Delete polish"
                       style={{ marginTop: '10px' }}
                     >
-                      Delete
+                      ×
                     </button>
                   </div>
                 ))}
@@ -412,11 +413,12 @@ const Collection = () => {
                       {topper.collection && <span className="collection-tag">{topper.collection}</span>}
                     </div>
                     <button 
-                      className="delete-button" 
+                      className="delete-button-inline" 
                       onClick={() => handleDeleteTopper(topper)}
+                      title="Delete topper"
                       style={{ marginTop: '10px' }}
                     >
-                      Delete
+                      ×
                     </button>
                   </div>
                 ))}
