@@ -14,6 +14,17 @@
             <p>Let me help you choose the perfect nail polish!</p>
         </header>
 
+        <!-- Navigation Tabs -->
+        <nav class="tab-navigation">
+            <button id="picker-tab" class="tab-button active">Polish Picker</button>
+            <button id="collection-tab" class="tab-button">My Collection</button>
+            <button id="combinations-tab" class="tab-button">Recent Combinations</button>
+            <button id="settings-tab" class="tab-button">Settings</button>
+        </nav>
+
+        <!-- Picker Tab Content -->
+        <div id="picker-content" class="tab-content active">
+
         <div class="filters">
             <div class="filter-group">
                 <label for="color-filter">Color Group:</label>
@@ -89,6 +100,19 @@
                     <button id="save-photo" class="save-photo-button hidden">Save Photo</button>
                 </div>
             </div>
+
+            <!-- Mark as Used Checkbox -->
+            <div class="combination-actions">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="mark-as-used">
+                    ✅ I used this combination!
+                </label>
+            </div>
+
+            <!-- Delete Polish Button -->
+            <div class="polish-actions">
+                <button id="delete-polish" class="delete-button hidden">🗑️ Delete This Polish</button>
+            </div>
         </div>
 
         <button id="pick-again" class="secondary-button hidden">Pick Again</button>
@@ -158,7 +182,6 @@
                     <option value="glitter">Glitter</option>
                     <option value="shimmer">Shimmer</option>
                     <option value="holographic">Holographic</option>
-                    <option value="chrome">Chrome</option>
                 </select>
             </div>
             <div class="form-buttons">
@@ -166,8 +189,171 @@
                 <button id="cancel-add-topper" class="cancel-button">Cancel</button>
             </div>
         </div>
+        </div>
+
+        <!-- Collection Tab Content -->
+        <div id="collection-content" class="tab-content hidden">
+            <h2>My Collection</h2>
+            
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <h3 id="total-polishes">0</h3>
+                    <p>Total Polishes</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="total-toppers">0</h3>
+                    <p>Total Toppers</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="favorite-color">-</h3>
+                    <p>Most Common Color</p>
+                </div>
+            </div>
+
+            <!-- Collection Filters -->
+            <div class="collection-filters">
+                <h3>Filter Your Collection</h3>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="collection-brand-filter">Brand:</label>
+                        <select id="collection-brand-filter">
+                            <option value="">All Brands</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="collection-color-filter">Color:</label>
+                        <select id="collection-color-filter">
+                            <option value="">All Colors</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="collection-formula-filter">Formula:</label>
+                        <select id="collection-formula-filter">
+                            <option value="">All Formulas</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Polish List -->
+            <div class="polish-collection">
+                <h3>Your Polishes</h3>
+                <div id="polish-list" class="polish-list"></div>
+            </div>
+
+            <!-- Topper List -->
+            <div class="topper-collection">
+                <h3>Your Toppers</h3>
+                <div id="topper-list" class="topper-list"></div>
+            </div>
+
+            <div class="collection-sections">
+                <div class="collection-section">
+                    <h3>Color Breakdown</h3>
+                    <div id="color-breakdown" class="breakdown-list"></div>
+                </div>
+                
+                <div class="collection-section">
+                    <h3>Formula Breakdown</h3>
+                    <div id="formula-breakdown" class="breakdown-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Combinations Tab Content -->
+        <div id="combinations-content" class="tab-content hidden">
+            <h2>Recent Combinations</h2>
+            
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <h3 id="combinations-tried">0</h3>
+                    <p>Combinations Tried</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="most-common-color">-</h3>
+                    <p>Most Common Color</p>
+                </div>
+            </div>
+
+            <div class="combinations-section">
+                <h3>Your Combination History</h3>
+                <div id="combinations-list" class="combinations-list"></div>
+            </div>
+        </div>
+
+        <!-- Settings Tab Content -->
+        <div id="settings-content" class="tab-content hidden">
+            <h2>Settings</h2>
+            
+            <div class="settings-section">
+                <h3>Add Custom Options</h3>
+                
+                <div class="custom-option-group">
+                    <h4>Add New Color Group</h4>
+                    <div class="form-group">
+                        <input type="text" id="new-color-input" placeholder="e.g., Coral, Teal, Burgundy">
+                        <button id="add-color-btn" class="add-option-btn">Add Color</button>
+                    </div>
+                </div>
+                
+                <div class="custom-option-group">
+                    <h4>Add New Formula Type</h4>
+                    <div class="form-group">
+                        <input type="text" id="new-formula-input" placeholder="e.g., Magnetic, Thermal, Glow-in-dark">
+                        <button id="add-formula-btn" class="add-option-btn">Add Formula</button>
+                    </div>
+                </div>
+                
+                <div class="custom-option-group">
+                    <h4>Add New Topper Type</h4>
+                    <div class="form-group">
+                        <input type="text" id="new-topper-type-input" placeholder="e.g., Textured, Magnetic, Flaky">
+                        <button id="add-topper-type-btn" class="add-option-btn">Add Topper Type</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Manage Custom Options</h3>
+                
+                <div class="manage-section">
+                    <h4>Custom Colors</h4>
+                    <div id="custom-colors-list" class="custom-options-list"></div>
+                </div>
+                
+                <div class="manage-section">
+                    <h4>Custom Formulas</h4>
+                    <div id="custom-formulas-list" class="custom-options-list"></div>
+                </div>
+                
+                <div class="manage-section">
+                    <h4>Custom Topper Types</h4>
+                    <div id="custom-topper-types-list" class="custom-options-list"></div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Data Management</h3>
+                <button id="export-data" class="secondary-button">Export My Data</button>
+                <button id="import-data" class="secondary-button">Import Data</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+                <button id="reset-data" class="delete-button">Reset All Data</button>
+            </div>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Load all JavaScript modules -->
+    <script src="js/data-manager.js"></script>
+    <script src="js/modal-manager.js"></script>
+    <script src="js/tab-navigation.js"></script>
+    <script src="js/polish-picker.js"></script>
+    <script src="js/polish-manager.js"></script>
+    <script src="js/topper-manager.js"></script>
+    <script src="js/collection-manager.js"></script>
+    <script src="js/combinations-manager.js"></script>
+    <script src="js/photo-manager.js"></script>
+    <script src="js/settings-manager.js"></script>
+    <script src="js/legacy-functions.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
