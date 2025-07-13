@@ -259,7 +259,6 @@ const Collection = () => {
                   {color.charAt(0).toUpperCase() + color.slice(1)}
                 </option>
               ))}
-              <option value="custom">+ Add Custom Color</option>
             </select>
             <input
               type="text"
@@ -558,7 +557,6 @@ const Collection = () => {
                   {color.charAt(0).toUpperCase() + color.slice(1)}
                 </option>
               ))}
-              <option value="custom">+ Add Custom Color</option>
             </select>
             <input
               type="text"
@@ -696,10 +694,10 @@ const Collection = () => {
                         <h4>{polish.name}</h4>
                         <div>
                           <button 
-                            className="edit-button-inline" 
+                            className="edit-button-circular" 
                             onClick={() => handleEditPolish(polish)}
                             title="Edit polish"
-                            style={{ marginRight: '5px' }}
+                            style={{ marginRight: '8px' }}
                           >
                             ✏️
                           </button>

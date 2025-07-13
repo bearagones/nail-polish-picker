@@ -205,6 +205,21 @@ body.dark-mode .checkbox-label-inline input[type="checkbox"] {
     border-color: #6FABD0;
 }
 
+/* Form Color Tags - Override for readability */
+.add-polish-form .color-tag,
+.add-topper-form .color-tag,
+.edit-polish-form .color-tag {
+    background: rgba(111, 171, 208, 0.15) !important;
+    color: #295982 !important;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
 @media (max-width: 768px) {
     .search-sort-row {
         flex-direction: column;

@@ -293,3 +293,24 @@ body.dark-mode .import-button:hover {
 .edit-button-inline:hover {
   background-color: rgba(108, 117, 125, 0.1);
 }
+
+.edit-button-circular {
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.edit-button-circular:hover {
+  background: #5a6268;
+  transform: scale(1.1);
+}
