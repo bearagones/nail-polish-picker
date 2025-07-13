@@ -78,10 +78,11 @@ The app will open at [http://localhost:3000](http://localhost:3000)
 2. **Deploy on Vercel:**
    - Go to [Vercel](https://vercel.com)
    - Import your GitHub repository
-   - Framework Preset: **Create React App**
-   - Root Directory: `./`
-   - Build Command: `npm run build` (should auto-detect)
-   - Output Directory: `build` (should auto-detect)
+   - Framework Preset: **Create React App** (auto-detected)
+   - Root Directory: `./` (default)
+   - Build Command: `npm ci && npm run build` (specified in vercel.json)
+   - Output Directory: `build` (specified in vercel.json)
+   - Install Command: `npm ci` (specified in vercel.json)
 
 3. **Set Environment Variables in Vercel:**
    - Go to your project settings in Vercel
