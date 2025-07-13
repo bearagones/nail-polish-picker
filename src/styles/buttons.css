@@ -295,7 +295,7 @@ body.dark-mode .import-button:hover {
 }
 
 .edit-button-circular {
-  background: #6c757d;
+  background: #adb5bd;
   color: white;
   border: none;
   border-radius: 50%;
@@ -311,6 +311,6 @@ body.dark-mode .import-button:hover {
 }
 
 .edit-button-circular:hover {
-  background: #5a6268;
+  background: #9ca3ab;
   transform: scale(1.1);
 }

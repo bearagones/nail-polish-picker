@@ -149,6 +149,11 @@ const Collection = () => {
     }
   };
 
+  const handleEditTopper = (topper) => {
+    // For now, we'll just show a message that topper editing isn't implemented yet
+    success('Topper editing feature coming soon!', 'Feature Not Available');
+  };
+
   const handleDeleteTopper = async (topper) => {
     const confirmed = await confirm(`Are you sure you want to delete "${topper.name}" by ${topper.brand}?`);
     if (confirmed) {
@@ -692,12 +697,11 @@ const Collection = () => {
                     <div key={index} className="polish-item">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h4>{polish.name}</h4>
-                        <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <button 
                             className="edit-button-circular" 
                             onClick={() => handleEditPolish(polish)}
                             title="Edit polish"
-                            style={{ marginRight: '8px' }}
                           >
                             ✏️
                           </button>
@@ -767,13 +771,22 @@ const Collection = () => {
                   <div key={index} className="topper-item">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <h4>{topper.name}</h4>
-                      <button 
-                        className="delete-button-inline" 
-                        onClick={() => handleDeleteTopper(topper)}
-                        title="Delete topper"
-                      >
-                        ×
-                      </button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button 
+                          className="edit-button-circular" 
+                          onClick={() => handleEditTopper(topper)}
+                          title="Edit topper"
+                        >
+                          ✏️
+                        </button>
+                        <button 
+                          className="delete-button-inline" 
+                          onClick={() => handleDeleteTopper(topper)}
+                          title="Delete topper"
+                        >
+                          ×
+                        </button>
+                      </div>
                     </div>
                     <div className="topper-details">
                       <span className="brand">{topper.brand}</span>
