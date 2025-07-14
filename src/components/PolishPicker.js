@@ -77,13 +77,14 @@ const PolishPicker = () => {
 
     const updatedCombination = {
       ...currentCombination,
-      used: isUsed
+      used: isUsed,
+      ...(photoPreview && isUsed && { photo: photoPreview }) // Include photo directly in combination if uploaded and used
     };
 
     // Save the combination
     dispatch({ type: 'ADD_COMBINATION', payload: updatedCombination });
 
-    // Save photo if uploaded
+    // For local storage (non-authenticated users), also save photo separately for backward compatibility
     if (photoPreview && isUsed) {
       dispatch({ 
         type: 'SAVE_COMBO_PHOTO', 
@@ -292,14 +293,14 @@ const PolishPicker = () => {
             </div>
           )}
 
-          {existingCombination && comboPhotos[existingCombination.id] && (
+          {existingCombination && (existingCombination.photo || comboPhotos[existingCombination.id]) && (
             <div className="existing-combination-photo">
               <h4 style={{ color: '#295982', marginBottom: '10px' }}>
                 ✨ You've used this combination before! Here's how it looked:
               </h4>
               <div className="photo-display">
                 <img 
-                  src={comboPhotos[existingCombination.id]} 
+                  src={existingCombination.photo || comboPhotos[existingCombination.id]} 
                   alt="Previous combination photo" 
                   style={{ 
                     maxWidth: '300px', 

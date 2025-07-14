@@ -11,6 +11,7 @@ const initializeUserDocument = async (userId) => {
       await setDoc(userRef, {
         polishCollection: [],
         topperCollection: [],
+        finisherCollection: [],
         recentCombinations: [],
         settings: {},
         createdAt: new Date().toISOString(),
@@ -99,8 +100,46 @@ export const removeTopperFromCollection = async (userId, topperId) => {
   }
 };
 
+// Add finisher to user's collection
+export const addFinisherToCollection = async (userId, finisher) => {
+  try {
+    await initializeUserDocument(userId);
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      finisherCollection: arrayUnion({
+        ...finisher,
+        id: Date.now().toString(),
+        addedAt: new Date().toISOString()
+      }),
+      updatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Error adding finisher:", error);
+    throw new Error(error.message);
+  }
+};
+
+// Remove finisher from user's collection
+export const removeFinisherFromCollection = async (userId, finisherId) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const updatedCollection = userData.finisherCollection.filter(finisher => finisher.id !== finisherId);
+      
+      await updateDoc(userRef, {
+        finisherCollection: updatedCollection
+      });
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 // Add combination to recent combinations
-export const addRecentCombination = async (userId, combination) => {
+export const addRecentCombination = async (userId, combination, photo = null) => {
   try {
     await initializeUserDocument(userId);
     const userRef = doc(db, "users", userId);
@@ -110,12 +149,15 @@ export const addRecentCombination = async (userId, combination) => {
       const userData = userDoc.data();
       let recentCombinations = userData.recentCombinations || [];
       
-      // Add new combination to the beginning
-      recentCombinations.unshift({
+      // Add new combination to the beginning with photo if provided
+      const combinationWithPhoto = {
         ...combination,
         id: Date.now().toString(),
-        createdAt: new Date().toISOString()
-      });
+        createdAt: new Date().toISOString(),
+        ...(photo && { photo: photo }) // Include photo in the combination object if provided
+      };
+      
+      recentCombinations.unshift(combinationWithPhoto);
       
       // Keep only the last 10 combinations
       if (recentCombinations.length > 10) {

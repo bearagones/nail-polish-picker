@@ -137,11 +137,12 @@ const Combinations = () => {
                 </div>
 
                 <div className="combination-photo">
-                  {comboPhotos[combo.id] ? (
+                  {/* Check for photo in combination object (Firebase) or comboPhotos object (localStorage) */}
+                  {(combo.photo || comboPhotos[combo.id]) ? (
                     <div className="photo-display">
                       <div className="photo-thumbnail-container">
                         <img 
-                          src={comboPhotos[combo.id]} 
+                          src={combo.photo || comboPhotos[combo.id]} 
                           alt="Combination photo" 
                           className="photo-thumbnail"
                           onClick={() => handleImageClick(combo.id)}
@@ -160,7 +161,7 @@ const Combinations = () => {
                         <div className="photo-modal" onClick={() => setExpandedImage(null)}>
                           <div className="photo-modal-content" onClick={(e) => e.stopPropagation()}>
                             <img 
-                              src={comboPhotos[combo.id]} 
+                              src={combo.photo || comboPhotos[combo.id]} 
                               alt="Combination photo expanded" 
                               className="photo-expanded"
                             />

@@ -5,6 +5,8 @@ import {
   removePolishFromCollection, 
   addTopperToCollection, 
   removeTopperFromCollection,
+  addFinisherToCollection,
+  removeFinisherFromCollection,
   addRecentCombination,
   removeRecentCombination
 } from '../firebase/firestore';
@@ -161,9 +163,24 @@ export const DataProvider = ({ children }) => {
               await removeTopperFromCollection(user.uid, topperToRemove.id);
             }
             break;
+          case 'ADD_FINISHER':
+            await addFinisherToCollection(user.uid, action.payload);
+            break;
+          case 'REMOVE_FINISHER':
+            // Find the finisher ID to remove
+            const finisherToRemove = state.finishers.find(f => 
+              f.name === action.payload.name && f.brand === action.payload.brand
+            );
+            if (finisherToRemove?.id) {
+              await removeFinisherFromCollection(user.uid, finisherToRemove.id);
+            }
+            break;
           case 'ADD_COMBINATION':
             if (action.payload.used) {
-              await addRecentCombination(user.uid, action.payload);
+              // Check if there's a photo to include
+              const photoKey = action.payload.id?.toString();
+              const photo = photoKey && state.comboPhotos[photoKey] ? state.comboPhotos[photoKey] : null;
+              await addRecentCombination(user.uid, action.payload, photo);
             }
             break;
           case 'REMOVE_COMBINATION':
@@ -187,10 +204,12 @@ export const DataProvider = ({ children }) => {
       const firebaseData = {
         nailPolishes: user.polishCollection || [],
         toppers: user.topperCollection || [],
+        finishers: user.finisherCollection || [],
         usedCombinations: user.recentCombinations || [],
         customColors: user.customColors || [],
         customFormulas: user.customFormulas || [],
         customTopperTypes: user.customTopperTypes || [],
+        customFinisherTypes: user.customFinisherTypes || [],
         comboPhotos: user.comboPhotos || {}
       };
       dispatch({ type: 'LOAD_DATA', payload: firebaseData });
@@ -199,10 +218,12 @@ export const DataProvider = ({ children }) => {
       const savedData = {
         nailPolishes: JSON.parse(localStorage.getItem('nailPolishes')) || [],
         toppers: JSON.parse(localStorage.getItem('toppers')) || [],
+        finishers: JSON.parse(localStorage.getItem('finishers')) || [],
         comboPhotos: JSON.parse(localStorage.getItem('comboPhotos')) || {},
         customColors: JSON.parse(localStorage.getItem('customColors')) || [],
         customFormulas: JSON.parse(localStorage.getItem('customFormulas')) || [],
         customTopperTypes: JSON.parse(localStorage.getItem('customTopperTypes')) || [],
+        customFinisherTypes: JSON.parse(localStorage.getItem('customFinisherTypes')) || [],
         usedCombinations: JSON.parse(localStorage.getItem('usedCombinations')) || []
       };
       dispatch({ type: 'LOAD_DATA', payload: savedData });
