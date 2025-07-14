@@ -293,14 +293,14 @@ const PolishPicker = () => {
             </div>
           )}
 
-          {existingCombination && (existingCombination.photo || comboPhotos[existingCombination.id]) && (
+          {existingCombination && (existingCombination.photoURL || existingCombination.photo || comboPhotos[existingCombination.id]) && (
             <div className="existing-combination-photo">
               <h4 style={{ color: '#295982', marginBottom: '10px' }}>
                 ✨ You've used this combination before! Here's how it looked:
               </h4>
               <div className="photo-display">
                 <img 
-                  src={existingCombination.photo || comboPhotos[existingCombination.id]} 
+                  src={existingCombination.photoURL || existingCombination.photo || comboPhotos[existingCombination.id]} 
                   alt="Previous combination photo" 
                   style={{ 
                     maxWidth: '300px', 

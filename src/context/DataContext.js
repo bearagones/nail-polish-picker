@@ -10,6 +10,7 @@ import {
   addRecentCombination,
   removeRecentCombination
 } from '../firebase/firestore';
+import { uploadPhoto, uploadPhotoFromDataURL, deletePhoto } from '../firebase/storage';
 
 const initialState = {
   nailPolishes: [],
@@ -187,10 +188,22 @@ export const DataProvider = ({ children }) => {
             break;
           case 'ADD_COMBINATION':
             if (action.payload.used) {
-              // Check if there's a photo to include
-              const photoKey = action.payload.id?.toString();
-              const photo = photoKey && state.comboPhotos[photoKey] ? state.comboPhotos[photoKey] : null;
-              await addRecentCombination(user.uid, action.payload, photo);
+              let photoData = null;
+              
+              // Handle photo upload to Firebase Storage if there's a photo
+              if (action.payload.photo) {
+                try {
+                  // If it's a data URL (base64), upload it to Firebase Storage
+                  if (action.payload.photo.startsWith('data:')) {
+                    photoData = await uploadPhotoFromDataURL(user.uid, action.payload.photo, action.payload.id);
+                  }
+                } catch (error) {
+                  console.error('Error uploading photo to Firebase Storage:', error);
+                  // Continue without photo if upload fails
+                }
+              }
+              
+              await addRecentCombination(user.uid, action.payload, photoData);
             }
             break;
           case 'REMOVE_COMBINATION':
@@ -209,8 +222,8 @@ export const DataProvider = ({ children }) => {
 
   // Load data - Firebase if authenticated, localStorage if not
   useEffect(() => {
-    if (isAuthenticated && user?.polishCollection) {
-      // Load from Firebase user data
+    if (isAuthenticated && user) {
+      // Load from Firebase user data (user object should have all fields after getUserData)
       const firebaseData = {
         nailPolishes: user.polishCollection || [],
         toppers: user.topperCollection || [],

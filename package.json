@@ -10,7 +10,12 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "keywords": ["react", "nail-polish", "picker", "firebase"],
+  "keywords": [
+    "react",
+    "nail-polish",
+    "picker",
+    "firebase"
+  ],
   "author": "",
   "license": "MIT",
   "engines": {

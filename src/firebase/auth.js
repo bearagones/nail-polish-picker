@@ -6,7 +6,7 @@ import {
   updateProfile,
   sendPasswordResetEmail
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "./config";
 
 // Sign up with email and password
@@ -72,9 +72,38 @@ export const signOutUser = async () => {
 // Get current user data from Firestore
 export const getUserData = async (uid) => {
   try {
-    const userDoc = await getDoc(doc(db, "users", uid));
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    
     if (userDoc.exists()) {
-      return userDoc.data();
+      const userData = userDoc.data();
+      
+      // Check if existing document is missing any required fields and add them
+      const updates = {};
+      
+      if (!userData.hasOwnProperty('finisherCollection')) {
+        updates.finisherCollection = [];
+      }
+      if (!userData.hasOwnProperty('polishCollection')) {
+        updates.polishCollection = [];
+      }
+      if (!userData.hasOwnProperty('topperCollection')) {
+        updates.topperCollection = [];
+      }
+      if (!userData.hasOwnProperty('recentCombinations')) {
+        updates.recentCombinations = [];
+      }
+      
+      // Only update if there are missing fields
+      if (Object.keys(updates).length > 0) {
+        updates.updatedAt = new Date().toISOString();
+        await updateDoc(userRef, updates);
+        
+        // Return the updated user data
+        return { ...userData, ...updates };
+      }
+      
+      return userData;
     } else {
       throw new Error("User data not found");
     }

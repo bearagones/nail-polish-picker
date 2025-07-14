@@ -1,22 +1,45 @@
 import { doc, updateDoc, arrayUnion, arrayRemove, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./config";
 
-// Initialize user document if it doesn't exist
+// Initialize user document if it doesn't exist or add missing fields
 const initializeUserDocument = async (userId) => {
   try {
     const userRef = doc(db, "users", userId);
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
+      // Create new document
       await setDoc(userRef, {
         polishCollection: [],
         topperCollection: [],
         finisherCollection: [],
         recentCombinations: [],
-        settings: {},
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
+    } else {
+      // Check if existing document is missing any required fields
+      const userData = userDoc.data();
+      const updates = {};
+      
+      if (!userData.hasOwnProperty('finisherCollection')) {
+        updates.finisherCollection = [];
+      }
+      if (!userData.hasOwnProperty('polishCollection')) {
+        updates.polishCollection = [];
+      }
+      if (!userData.hasOwnProperty('topperCollection')) {
+        updates.topperCollection = [];
+      }
+      if (!userData.hasOwnProperty('recentCombinations')) {
+        updates.recentCombinations = [];
+      }
+      
+      // Only update if there are missing fields
+      if (Object.keys(updates).length > 0) {
+        updates.updatedAt = new Date().toISOString();
+        await updateDoc(userRef, updates);
+      }
     }
   } catch (error) {
     console.error("Error initializing user document:", error);
@@ -139,7 +162,7 @@ export const removeFinisherFromCollection = async (userId, finisherId) => {
 };
 
 // Add combination to recent combinations
-export const addRecentCombination = async (userId, combination, photo = null) => {
+export const addRecentCombination = async (userId, combination, photoData = null) => {
   try {
     await initializeUserDocument(userId);
     const userRef = doc(db, "users", userId);
@@ -149,12 +172,16 @@ export const addRecentCombination = async (userId, combination, photo = null) =>
       const userData = userDoc.data();
       let recentCombinations = userData.recentCombinations || [];
       
-      // Add new combination to the beginning with photo if provided
+      // Add new combination to the beginning with photo data if provided
       const combinationWithPhoto = {
         ...combination,
-        id: Date.now().toString(),
+        id: combination.id || Date.now().toString(),
         createdAt: new Date().toISOString(),
-        ...(photo && { photo: photo }) // Include photo in the combination object if provided
+        ...(photoData && { 
+          photoURL: photoData.url,
+          photoPath: photoData.path,
+          photoFileName: photoData.fileName
+        })
       };
       
       recentCombinations.unshift(combinationWithPhoto);
