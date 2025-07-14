@@ -39,9 +39,9 @@ const PolishPicker = () => {
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (limit to 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        success('Image size must be less than 2MB. Please choose a smaller image.', 'File Too Large');
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        success('Image size must be less than 5MB. Please choose a smaller image.', 'File Too Large');
         return;
       }
 

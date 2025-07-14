@@ -68,6 +68,7 @@ export const AuthProvider = ({ children }) => {
             displayName: firebaseUser.displayName,
             polishCollection: [],
             topperCollection: [],
+            finisherCollection: [],
             recentCombinations: []
           };
           dispatch({ type: 'RESTORE_SESSION', payload: user });
