@@ -3,14 +3,14 @@ import { useData } from '../context/DataContext';
 import { useModal } from '../context/ModalContext';
 
 const PolishPicker = () => {
-  const { nailPolishes, toppers, finishers, getAllColors, getAllFormulas, usedCombinations, comboPhotos, dispatch } = useData();
+  const { nailPolishes, toppers, finishers, getAllColors, getAllFormulas, getAllFinisherTypes, usedCombinations, comboPhotos, dispatch } = useData();
   const { success } = useModal();
   
   const [filters, setFilters] = useState({
     color: 'any',
     formula: 'any',
-    includeTopper: false,
-    includeFinisher: false
+    finisher: 'any',
+    includeTopper: false
   });
   
   const [result, setResult] = useState(null);
@@ -142,10 +142,27 @@ const PolishPicker = () => {
       selectedTopper = toppers[Math.floor(Math.random() * toppers.length)];
     }
 
+    // Always select a finisher
     let selectedFinisher = null;
-    if (filters.includeFinisher && finishers.length > 0) {
-      selectedFinisher = finishers[Math.floor(Math.random() * finishers.length)];
+    if (finishers.length === 0) {
+      success('Please add some finishers to your collection first!', 'No Finishers Available');
+      return;
     }
+
+    // Filter finishers by preference
+    let filteredFinishers = finishers;
+    if (filters.finisher !== 'any') {
+      filteredFinishers = finishers.filter(finisher => 
+        finisher.type.toLowerCase() === filters.finisher.toLowerCase()
+      );
+    }
+
+    if (filteredFinishers.length === 0) {
+      success('No finishers match your preference. Try selecting "Any Finisher" or add more finishers to your collection!', 'No Matching Finishers');
+      return;
+    }
+
+    selectedFinisher = filteredFinishers[Math.floor(Math.random() * filteredFinishers.length)];
 
     // Check if this combination has been used before
     const existingCombo = findExistingCombination(randomPolish, selectedTopper);
@@ -205,6 +222,21 @@ const PolishPicker = () => {
         </div>
 
         <div className="filter-group">
+          <label>Finisher Preference:</label>
+          <select 
+            value={filters.finisher} 
+            onChange={(e) => handleFilterChange('finisher', e.target.value)}
+          >
+            <option value="any">Any Finisher</option>
+            {getAllFinisherTypes().map(finisher => (
+              <option key={finisher} value={finisher}>
+                {finisher.charAt(0).toUpperCase() + finisher.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-group">
           <label className="checkbox-label">
             <input
               type="checkbox"
@@ -212,17 +244,6 @@ const PolishPicker = () => {
               onChange={(e) => handleFilterChange('includeTopper', e.target.checked)}
             />
             Include a topper
-          </label>
-        </div>
-
-        <div className="filter-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={filters.includeFinisher}
-              onChange={(e) => handleFilterChange('includeFinisher', e.target.checked)}
-            />
-            Include a finisher
           </label>
         </div>
       </div>
