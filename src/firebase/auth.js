@@ -28,6 +28,7 @@ export const signUpWithEmail = async (email, password, displayName) => {
       createdAt: new Date().toISOString(),
       polishCollection: [],
       topperCollection: [],
+      finisherCollection: [],
       recentCombinations: []
     });
     

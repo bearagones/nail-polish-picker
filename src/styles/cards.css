@@ -438,7 +438,6 @@
 
 .photo-thumbnail:hover {
     border-color: #6FABD0;
-    transform: scale(1.05);
 }
 
 .delete-photo-button {

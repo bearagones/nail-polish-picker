@@ -132,7 +132,29 @@ export const DataProvider = ({ children }) => {
 
   // Enhanced dispatch that syncs with Firebase for authenticated users
   const enhancedDispatch = async (action) => {
-    // First update local state
+    // For removal actions, find the item BEFORE updating local state
+    let itemToRemove = null;
+    if (isAuthenticated && user?.uid) {
+      switch (action.type) {
+        case 'REMOVE_POLISH':
+          itemToRemove = state.nailPolishes.find(p => 
+            p.name === action.payload.name && p.brand === action.payload.brand
+          );
+          break;
+        case 'REMOVE_TOPPER':
+          itemToRemove = state.toppers.find(t => 
+            t.name === action.payload.name && t.brand === action.payload.brand
+          );
+          break;
+        case 'REMOVE_FINISHER':
+          itemToRemove = state.finishers.find(f => 
+            f.name === action.payload.name && f.brand === action.payload.brand
+          );
+          break;
+      }
+    }
+
+    // Update local state
     dispatch(action);
 
     // Then sync with Firebase if authenticated
@@ -143,36 +165,24 @@ export const DataProvider = ({ children }) => {
             await addPolishToCollection(user.uid, action.payload);
             break;
           case 'REMOVE_POLISH':
-            // Find the polish ID to remove
-            const polishToRemove = state.nailPolishes.find(p => 
-              p.name === action.payload.name && p.brand === action.payload.brand
-            );
-            if (polishToRemove?.id) {
-              await removePolishFromCollection(user.uid, polishToRemove.id);
+            if (itemToRemove?.id) {
+              await removePolishFromCollection(user.uid, itemToRemove.id);
             }
             break;
           case 'ADD_TOPPER':
             await addTopperToCollection(user.uid, action.payload);
             break;
           case 'REMOVE_TOPPER':
-            // Find the topper ID to remove
-            const topperToRemove = state.toppers.find(t => 
-              t.name === action.payload.name && t.brand === action.payload.brand
-            );
-            if (topperToRemove?.id) {
-              await removeTopperFromCollection(user.uid, topperToRemove.id);
+            if (itemToRemove?.id) {
+              await removeTopperFromCollection(user.uid, itemToRemove.id);
             }
             break;
           case 'ADD_FINISHER':
             await addFinisherToCollection(user.uid, action.payload);
             break;
           case 'REMOVE_FINISHER':
-            // Find the finisher ID to remove
-            const finisherToRemove = state.finishers.find(f => 
-              f.name === action.payload.name && f.brand === action.payload.brand
-            );
-            if (finisherToRemove?.id) {
-              await removeFinisherFromCollection(user.uid, finisherToRemove.id);
+            if (itemToRemove?.id) {
+              await removeFinisherFromCollection(user.uid, itemToRemove.id);
             }
             break;
           case 'ADD_COMBINATION':
