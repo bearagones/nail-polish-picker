@@ -122,6 +122,18 @@ const Combinations = () => {
                       </div>
                     </div>
                   )}
+
+                  {combo.finisher && (
+                    <div className="finisher-section">
+                      <div className="finisher-label">+ Finisher:</div>
+                      <div className="finisher-info">
+                        <strong>{combo.finisher.name}</strong> by {combo.finisher.brand}
+                        <span className="formula-tag finisher-type">
+                          {combo.finisher.type}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="combination-photo">

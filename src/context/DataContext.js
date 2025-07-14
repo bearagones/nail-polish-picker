@@ -12,10 +12,12 @@ import {
 const initialState = {
   nailPolishes: [],
   toppers: [],
+  finishers: [],
   comboPhotos: {},
   customColors: [],
   customFormulas: [],
   customTopperTypes: [],
+  customFinisherTypes: [],
   customBrands: [],
   customCollections: [],
   usedCombinations: []
@@ -43,6 +45,10 @@ function dataReducer(state, action) {
       return { ...state, toppers: [...state.toppers, action.payload] };
     case 'REMOVE_TOPPER':
       return { ...state, toppers: state.toppers.filter(t => !(t.name === action.payload.name && t.brand === action.payload.brand)) };
+    case 'ADD_FINISHER':
+      return { ...state, finishers: [...state.finishers, action.payload] };
+    case 'REMOVE_FINISHER':
+      return { ...state, finishers: state.finishers.filter(f => !(f.name === action.payload.name && f.brand === action.payload.brand)) };
     case 'ADD_COMBINATION':
       return { ...state, usedCombinations: [...state.usedCombinations, action.payload] };
     case 'UPDATE_COMBINATION':
@@ -66,8 +72,22 @@ function dataReducer(state, action) {
       return { ...state, customTopperTypes: [...state.customTopperTypes, action.payload] };
     case 'REMOVE_CUSTOM_TOPPER_TYPE':
       return { ...state, customTopperTypes: state.customTopperTypes.filter(t => t !== action.payload) };
+    case 'ADD_CUSTOM_FINISHER_TYPE':
+      return { ...state, customFinisherTypes: [...state.customFinisherTypes, action.payload] };
+    case 'REMOVE_CUSTOM_FINISHER_TYPE':
+      return { ...state, customFinisherTypes: state.customFinisherTypes.filter(t => t !== action.payload) };
     case 'ADD_CUSTOM_BRAND':
-      return { ...state, customBrands: [...state.customBrands, action.payload] };
+      // Prevent duplicates by checking if brand already exists
+      const allExistingBrands = new Set([
+        ...state.nailPolishes.map(p => p.brand),
+        ...state.toppers.map(t => t.brand),
+        ...state.finishers.map(f => f.brand),
+        ...state.customBrands
+      ]);
+      if (!allExistingBrands.has(action.payload)) {
+        return { ...state, customBrands: [...state.customBrands, action.payload] };
+      }
+      return state;
     case 'REMOVE_CUSTOM_BRAND':
       return { ...state, customBrands: state.customBrands.filter(b => b !== action.payload) };
     case 'ADD_CUSTOM_COLLECTION':
@@ -205,7 +225,8 @@ export const DataProvider = ({ children }) => {
 
   const getAllFormulas = () => {
     const defaults = ['crème', 'shimmer', 'glitter', 'metallic', 'holographic', 'chrome'];
-    return [...defaults, ...state.customFormulas];
+    const allFormulas = new Set([...defaults, ...state.customFormulas]);
+    return Array.from(allFormulas).sort();
   };
 
   const getAllTopperTypes = () => {
@@ -213,13 +234,24 @@ export const DataProvider = ({ children }) => {
     return [...defaults, ...state.customTopperTypes];
   };
 
+  const getAllFinisherTypes = () => {
+    const defaults = ['matte top coat', 'glossy top coat'];
+    return [...defaults, ...state.customFinisherTypes];
+  };
+
   const getAllBrands = () => {
-    // Extract unique brands from existing polishes and toppers
+    // Extract unique brands from existing polishes, toppers, and finishers
     const existingBrands = new Set([
       ...state.nailPolishes.map(p => p.brand),
-      ...state.toppers.map(t => t.brand)
+      ...state.toppers.map(t => t.brand),
+      ...state.finishers.map(f => f.brand)
     ]);
-    return [...Array.from(existingBrands).sort(), ...state.customBrands];
+    // Combine existing and custom brands, remove duplicates, and sort alphabetically
+    const allBrands = new Set([
+      ...Array.from(existingBrands),
+      ...state.customBrands
+    ]);
+    return Array.from(allBrands).sort();
   };
 
   const getAllCollections = () => {
@@ -242,6 +274,7 @@ export const DataProvider = ({ children }) => {
     getAllColors,
     getAllFormulas,
     getAllTopperTypes,
+    getAllFinisherTypes,
     getAllBrands,
     getAllCollections
   };

@@ -3,13 +3,14 @@ import { useData } from '../context/DataContext';
 import { useModal } from '../context/ModalContext';
 
 const PolishPicker = () => {
-  const { nailPolishes, toppers, getAllColors, getAllFormulas, usedCombinations, comboPhotos, dispatch } = useData();
+  const { nailPolishes, toppers, finishers, getAllColors, getAllFormulas, usedCombinations, comboPhotos, dispatch } = useData();
   const { success } = useModal();
   
   const [filters, setFilters] = useState({
     color: 'any',
     formula: 'any',
-    includeTopper: false
+    includeTopper: false,
+    includeFinisher: false
   });
   
   const [result, setResult] = useState(null);
@@ -141,6 +142,11 @@ const PolishPicker = () => {
       selectedTopper = toppers[Math.floor(Math.random() * toppers.length)];
     }
 
+    let selectedFinisher = null;
+    if (filters.includeFinisher && finishers.length > 0) {
+      selectedFinisher = finishers[Math.floor(Math.random() * finishers.length)];
+    }
+
     // Check if this combination has been used before
     const existingCombo = findExistingCombination(randomPolish, selectedTopper);
     
@@ -149,12 +155,13 @@ const PolishPicker = () => {
       id: Date.now(),
       polish: randomPolish,
       topper: selectedTopper,
+      finisher: selectedFinisher,
       date: new Date().toISOString(),
       used: false
     };
 
     setCurrentCombination(combination);
-    setResult({ polish: randomPolish, topper: selectedTopper });
+    setResult({ polish: randomPolish, topper: selectedTopper, finisher: selectedFinisher });
     setExistingCombination(existingCombo);
     setIsUsed(false);
     setPhotoFile(null);
@@ -207,6 +214,17 @@ const PolishPicker = () => {
             Include a topper
           </label>
         </div>
+
+        <div className="filter-group">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={filters.includeFinisher}
+              onChange={(e) => handleFilterChange('includeFinisher', e.target.checked)}
+            />
+            Include a finisher
+          </label>
+        </div>
       </div>
 
       <button className="pick-button" onClick={pickRandomPolish}>
@@ -239,6 +257,16 @@ const PolishPicker = () => {
               <div className="topper-details">
                 <span className="brand">{result.topper.brand}</span>
                 <span className="formula-tag">{result.topper.type}</span>
+              </div>
+            </div>
+          )}
+
+          {result.finisher && (
+            <div className="finisher-card">
+              <h3>With Finisher: {result.finisher.name}</h3>
+              <div className="finisher-details">
+                <span className="brand">{result.finisher.brand}</span>
+                <span className="formula-tag">{result.finisher.type}</span>
               </div>
             </div>
           )}

@@ -3,14 +3,16 @@ import { useData } from '../context/DataContext';
 import { useModal } from '../context/ModalContext';
 
 const Collection = () => {
-  const { nailPolishes, toppers, getAllColors, getAllFormulas, getAllTopperTypes, getAllBrands, getAllCollections, dispatch } = useData();
+  const { nailPolishes, toppers, finishers, getAllColors, getAllFormulas, getAllTopperTypes, getAllFinisherTypes, getAllBrands, getAllCollections, dispatch } = useData();
   const { success, confirm } = useModal();
   
   const [showAddPolish, setShowAddPolish] = useState(false);
   const [showAddTopper, setShowAddTopper] = useState(false);
+  const [showAddFinisher, setShowAddFinisher] = useState(false);
   const [editingPolish, setEditingPolish] = useState(null);
   const [newPolish, setNewPolish] = useState({ name: '', brand: '', colors: [], formula: '', collection: '' });
   const [newTopper, setNewTopper] = useState({ name: '', brand: '', type: '', collection: '' });
+  const [newFinisher, setNewFinisher] = useState({ name: '', brand: '', type: '', collection: '' });
   
   // Sort and search states
   const [polishSortBy, setPolishSortBy] = useState('date-newest');
@@ -162,6 +164,32 @@ const Collection = () => {
     }
   };
 
+  const handleAddFinisher = (e) => {
+    e.preventDefault();
+    if (!newFinisher.name || !newFinisher.brand || !newFinisher.type) {
+      success('Please fill in all fields', 'Missing Information');
+      return;
+    }
+    
+    dispatch({ type: 'ADD_FINISHER', payload: newFinisher });
+    setNewFinisher({ name: '', brand: '', type: '', collection: '' });
+    setShowAddFinisher(false);
+    success('Finisher added successfully!');
+  };
+
+  const handleEditFinisher = (finisher) => {
+    // For now, we'll just show a message that finisher editing isn't implemented yet
+    success('Finisher editing feature coming soon!', 'Feature Not Available');
+  };
+
+  const handleDeleteFinisher = async (finisher) => {
+    const confirmed = await confirm(`Are you sure you want to delete "${finisher.name}" by ${finisher.brand}?`);
+    if (confirmed) {
+      dispatch({ type: 'REMOVE_FINISHER', payload: finisher });
+      success('Finisher deleted successfully!');
+    }
+  };
+
   return (
     <div>
       <div className="stats-overview">
@@ -173,6 +201,10 @@ const Collection = () => {
           <h3>{toppers.length}</h3>
           <p>Toppers</p>
         </div>
+        <div className="stat-card">
+          <h3>{finishers.length}</h3>
+          <p>Finishers</p>
+        </div>
       </div>
 
       <div className="collection-buttons">
@@ -181,6 +213,9 @@ const Collection = () => {
         </button>
         <button className="secondary-button" onClick={() => setShowAddTopper(!showAddTopper)}>
           {showAddTopper ? 'Cancel' : 'Add Topper'}
+        </button>
+        <button className="secondary-button" onClick={() => setShowAddFinisher(!showAddFinisher)}>
+          {showAddFinisher ? 'Cancel' : 'Add Finisher'}
         </button>
       </div>
 
@@ -477,6 +512,124 @@ const Collection = () => {
             </button>
             <button type="submit" className="save-button">
               Add Topper
+            </button>
+          </div>
+        </form>
+      )}
+
+      {showAddFinisher && (
+        <form className="add-finisher-form" onSubmit={handleAddFinisher}>
+          <h3>Add New Finisher</h3>
+          <div className="form-group">
+            <label>Name:</label>
+            <input
+              type="text"
+              value={newFinisher.name}
+              onChange={(e) => setNewFinisher(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Brand:</label>
+            <select
+              value={newFinisher.brand}
+              onChange={(e) => setNewFinisher(prev => ({ ...prev, brand: e.target.value }))}
+              required
+            >
+              <option value="">Select Brand</option>
+              {getAllBrands().map(brand => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Brand</option>
+            </select>
+            {newFinisher.brand === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom brand name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customBrand = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_BRAND', payload: customBrand });
+                    setNewFinisher(prev => ({ ...prev, brand: customBrand }));
+                  } else {
+                    setNewFinisher(prev => ({ ...prev, brand: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
+            <label>Type:</label>
+            <select
+              value={newFinisher.type}
+              onChange={(e) => setNewFinisher(prev => ({ ...prev, type: e.target.value }))}
+              required
+            >
+              <option value="">Select Type</option>
+              {getAllFinisherTypes().map(type => (
+                <option key={type} value={type}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Type</option>
+            </select>
+            {newFinisher.type === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom finisher type"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customType = e.target.value.toLowerCase().trim();
+                    dispatch({ type: 'ADD_CUSTOM_FINISHER_TYPE', payload: customType });
+                    setNewFinisher(prev => ({ ...prev, type: customType }));
+                  } else {
+                    setNewFinisher(prev => ({ ...prev, type: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
+            <label>Collection (Optional):</label>
+            <select
+              value={newFinisher.collection}
+              onChange={(e) => setNewFinisher(prev => ({ ...prev, collection: e.target.value }))}
+            >
+              <option value="">No Collection</option>
+              {getAllCollections().map(collection => (
+                <option key={collection} value={collection}>
+                  {collection}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Collection</option>
+            </select>
+            {newFinisher.collection === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom collection name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customCollection = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_COLLECTION', payload: customCollection });
+                    setNewFinisher(prev => ({ ...prev, collection: customCollection }));
+                  } else {
+                    setNewFinisher(prev => ({ ...prev, collection: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-buttons">
+            <button type="button" className="cancel-button" onClick={() => setShowAddFinisher(false)}>
+              Cancel
+            </button>
+            <button type="submit" className="save-button">
+              Add Finisher
             </button>
           </div>
         </form>
@@ -798,6 +951,46 @@ const Collection = () => {
               </div>
             </div>
           </>
+        )}
+      </div>
+
+      <div style={{ marginTop: '30px' }}>
+        <h3>My Finishers</h3>
+        {finishers.length === 0 ? (
+          <p className="empty-message">No finishers in your collection yet. Add some above!</p>
+        ) : (
+          <div className="collection-content">
+            <div className="finisher-list">
+              {finishers.map((finisher, index) => (
+                <div key={index} className="finisher-item">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h4>{finisher.name}</h4>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <button 
+                        className="edit-button-circular" 
+                        onClick={() => handleEditFinisher(finisher)}
+                        title="Edit finisher"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        className="delete-button-inline" 
+                        onClick={() => handleDeleteFinisher(finisher)}
+                        title="Delete finisher"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+                  <div className="finisher-details">
+                    <span className="brand">{finisher.brand}</span>
+                    <span className="formula-tag">{finisher.type}</span>
+                    {finisher.collection && <span className="collection-tag">{finisher.collection}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>
