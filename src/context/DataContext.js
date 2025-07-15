@@ -191,14 +191,20 @@ export const DataProvider = ({ children }) => {
               let photoData = null;
               
               // Handle photo upload to Firebase Storage if there's a photo
-              if (action.payload.photo) {
+              if (action.payload.photoFile) {
                 try {
-                  // If it's a data URL (base64), upload it to Firebase Storage
-                  if (action.payload.photo.startsWith('data:')) {
-                    photoData = await uploadPhotoFromDataURL(user.uid, action.payload.photo, action.payload.id);
-                  }
+                  // Upload the actual file to Firebase Storage
+                  photoData = await uploadPhoto(user.uid, action.payload.photoFile, action.payload.id);
                 } catch (error) {
                   console.error('Error uploading photo to Firebase Storage:', error);
+                  // Continue without photo if upload fails
+                }
+              } else if (action.payload.photo && action.payload.photo.startsWith('data:')) {
+                try {
+                  // Fallback: If it's a data URL (base64), upload it to Firebase Storage
+                  photoData = await uploadPhotoFromDataURL(user.uid, action.payload.photo, action.payload.id);
+                } catch (error) {
+                  console.error('Error uploading photo from data URL to Firebase Storage:', error);
                   // Continue without photo if upload fails
                 }
               }

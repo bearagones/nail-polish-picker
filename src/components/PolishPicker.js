@@ -72,13 +72,14 @@ const PolishPicker = () => {
     setShowAddTopper(false);
   };
 
-  const handleSaveCombination = () => {
+  const handleSaveCombination = async () => {
     if (!currentCombination) return;
 
     const updatedCombination = {
       ...currentCombination,
       used: isUsed,
-      ...(photoPreview && isUsed && { photo: photoPreview }) // Include photo directly in combination if uploaded and used
+      ...(photoFile && isUsed && { photoFile: photoFile }), // Include actual file for Firebase Storage
+      ...(photoPreview && isUsed && { photo: photoPreview }) // Include preview for display/localStorage
     };
 
     // Save the combination
