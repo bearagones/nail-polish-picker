@@ -312,7 +312,7 @@ const PolishPicker = () => {
               {/* Display multiple colors or single color */}
               {Array.isArray(result.polish.colors) ? (
                 result.polish.colors.map((color, colorIndex) => (
-                  <span key={colorIndex} className="color-tag" style={{ marginRight: '3px' }}>
+                  <span key={colorIndex} className="color-tag color-tag-spaced">
                     {color.charAt(0).toUpperCase() + color.slice(1)}
                   </span>
                 ))
@@ -345,30 +345,18 @@ const PolishPicker = () => {
 
           {existingCombination && (existingCombination.photoURL || existingCombination.photo || comboPhotos[existingCombination.id]) && (
             <div className="existing-combination-photo">
-              <h4 style={{ color: '#295982', marginBottom: '10px' }}>
+              <h4 className="existing-combination-title">
                 ✨ You've used this combination before! Here's how it looked:
               </h4>
               <div className="photo-display">
                 <img 
                   src={existingCombination.photoURL || existingCombination.photo || comboPhotos[existingCombination.id]} 
                   alt="Previous combination photo" 
-                  style={{ 
-                    maxWidth: '300px', 
-                    maxHeight: '300px', 
-                    borderRadius: '12px',
-                    border: '3px solid #6FABD0',
-                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
-                    cursor: 'pointer'
-                  }}
+                  className="existing-combination-image"
                   onClick={() => setExpandedImage('existing')}
                   title="Click to expand"
                 />
-                <p style={{ 
-                  fontSize: '0.9rem', 
-                  color: '#6c757d', 
-                  marginTop: '8px',
-                  fontStyle: 'italic'
-                }}>
+                <p className="existing-combination-date">
                   Used on {new Date(existingCombination.date).toLocaleDateString()}
                 </p>
               </div>
@@ -406,34 +394,34 @@ const PolishPicker = () => {
           )}
 
           <div className="combination-actions">
-            <div className="photo-and-checkbox-row" style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '15px' }}>
-              <div className="upload-section" style={{ display: 'flex', gap: '15px' }}>
+            <div className="photo-and-checkbox-row">
+              <div className="upload-section">
                 {!photoPreview && (
                   <div className="photo-upload-section">
-                    <label htmlFor="photo-upload" className="photo-upload-label">
-                      📷 Upload Photo (Optional)
+                    <label htmlFor="photo-upload" className="upload-button photo-upload-button">
+                      📷 Upload Photo
                     </label>
                     <input
                       id="photo-upload"
                       type="file"
                       accept="image/*"
                       onChange={handlePhotoUpload}
-                      style={{ display: 'none' }}
+                      className="hidden-file-input"
                     />
                   </div>
                 )}
 
                 {!videoPreview && (
                   <div className="video-upload-section">
-                    <label htmlFor="video-upload" className="photo-upload-label">
-                      🎥 Upload Video (Optional)
+                    <label htmlFor="video-upload" className="upload-button video-upload-button">
+                      🎥 Upload Video
                     </label>
                     <input
                       id="video-upload"
                       type="file"
                       accept="video/*"
                       onChange={handleVideoUpload}
-                      style={{ display: 'none' }}
+                      className="hidden-file-input"
                     />
                   </div>
                 )}
@@ -452,39 +440,18 @@ const PolishPicker = () => {
             </div>
 
             {photoPreview && (
-              <div className="photo-preview" style={{ marginBottom: '15px', position: 'relative', display: 'inline-block' }}>
+              <div className="photo-preview-picker">
                 <img 
                   src={photoPreview} 
                   alt="Combination preview" 
-                  style={{ 
-                    maxWidth: '200px', 
-                    maxHeight: '200px', 
-                    borderRadius: '8px',
-                    cursor: 'pointer'
-                  }}
+                  className="photo-preview-image"
                   onClick={() => setExpandedImage('preview')}
                   title="Click to expand"
                 />
                 <button 
-                  className="delete-photo-button"
+                  className="delete-photo-button-picker"
                   onClick={handleDeletePhoto}
                   title="Delete photo"
-                  style={{
-                    position: 'absolute',
-                    top: '5px',
-                    right: '5px',
-                    background: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '24px',
-                    height: '24px',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
                 >
                   ✕
                 </button>
@@ -510,37 +477,17 @@ const PolishPicker = () => {
             )}
 
             {videoPreview && (
-              <div className="video-preview" style={{ marginBottom: '15px', position: 'relative', display: 'inline-block' }}>
+              <div className="video-preview-picker">
                 <video 
                   src={videoPreview} 
                   controls
-                  style={{ 
-                    maxWidth: '200px', 
-                    maxHeight: '200px', 
-                    borderRadius: '8px'
-                  }}
+                  className="video-preview-video"
                   title="Video preview"
                 />
                 <button 
-                  className="delete-video-button"
+                  className="delete-video-button-picker"
                   onClick={handleDeleteVideo}
                   title="Delete video"
-                  style={{
-                    position: 'absolute',
-                    top: '5px',
-                    right: '5px',
-                    background: '#dc3545',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '24px',
-                    height: '24px',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
                 >
                   ✕
                 </button>

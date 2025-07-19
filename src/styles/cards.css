@@ -75,6 +75,10 @@
     font-weight: 500;
 }
 
+.color-tag-spaced {
+    margin-right: 3px;
+}
+
 .formula-tag {
     background: rgba(255, 255, 255, 0.25);
     color: white;
@@ -356,10 +360,15 @@
     background: #f8f9fa;
     border-radius: 10px;
     border: 2px dashed #e9ecef;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .photo-upload-section {
-    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .photo-upload-label {
@@ -388,7 +397,8 @@
 }
 
 .used-checkbox {
-    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .used-checkbox .checkbox-label {
@@ -444,6 +454,140 @@
     align-items: center;
     flex-wrap: wrap;
     margin-top: 10px;
+}
+
+/* PolishPicker specific styles */
+.photo-and-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 0;
+    min-height: 48px;
+}
+
+.upload-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Existing combination styles */
+.existing-combination-photo {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+}
+
+.existing-combination-title {
+    color: #295982;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.existing-combination-image {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 12px;
+    border: 3px solid #6FABD0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.existing-combination-image:hover {
+    transform: scale(1.02);
+}
+
+.existing-combination-date {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+/* Photo preview styles for PolishPicker */
+.photo-preview-picker {
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.photo-preview-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.photo-preview-image:hover {
+    transform: scale(1.02);
+}
+
+.delete-photo-button-picker {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.delete-photo-button-picker:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+/* Video preview styles for PolishPicker */
+.video-preview-picker {
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.video-preview-video {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+}
+
+.delete-video-button-picker {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.delete-video-button-picker:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+/* Hidden file inputs */
+.hidden-file-input {
+    display: none;
 }
 
 /* Smaller thumbnails for Recent Combinations */
