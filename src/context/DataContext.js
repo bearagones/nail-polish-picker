@@ -304,10 +304,13 @@ export const DataProvider = ({ children }) => {
               // Update the combination in Firebase with the photo data
               if (photoData) {
                 console.log('DataContext: Updating combination in Firebase with photoData:', photoData);
-                await updateRecentCombination(user.uid, action.payload.id, action.payload.updates, photoData);
+                // Filter out photoFile from updates since Firestore can't handle File objects
+                const { photoFile, ...firestoreUpdates } = action.payload.updates;
+                await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates, photoData);
               } else {
-                // Update without photo data
-                await updateRecentCombination(user.uid, action.payload.id, action.payload.updates);
+                // Update without photo data - also filter out photoFile
+                const { photoFile, ...firestoreUpdates } = action.payload.updates;
+                await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates);
               }
             }
             break;
