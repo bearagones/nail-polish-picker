@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { useModal } from '../context/ModalContext';
+import { useAuth } from '../context/AuthContext';
 
 const Combinations = () => {
   const { usedCombinations, comboPhotos, dispatch } = useData();
   const { confirm, success } = useModal();
+  const { isAuthenticated } = useAuth();
   const [uploadingPhoto, setUploadingPhoto] = useState(null);
   const [expandedImage, setExpandedImage] = useState(null);
 
@@ -27,13 +29,45 @@ const Combinations = () => {
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        dispatch({ 
-          type: 'SAVE_COMBO_PHOTO', 
-          payload: { 
-            key: comboId.toString(), 
-            photo: e.target.result 
-          } 
-        });
+        const photoData = e.target.result;
+        
+        if (isAuthenticated) {
+          // For authenticated users, update the combination with photo data
+          // This will trigger Firebase Storage upload via the DataContext
+          const existingCombo = usedCombinations.find(combo => combo.id === comboId);
+          if (existingCombo) {
+            const updatedCombo = {
+              ...existingCombo,
+              photoFile: file, // Include actual file for Firebase Storage
+              photo: photoData // Include preview for display
+            };
+            
+            console.log('Combinations: Updating combination with photo for authenticated user:', {
+              comboId,
+              hasPhotoFile: !!updatedCombo.photoFile,
+              hasPhoto: !!updatedCombo.photo
+            });
+            
+            // Use UPDATE_COMBINATION to trigger Firebase sync
+            dispatch({ 
+              type: 'UPDATE_COMBINATION', 
+              payload: { 
+                id: comboId, 
+                updates: updatedCombo 
+              } 
+            });
+          }
+        } else {
+          // For non-authenticated users, save to local storage
+          dispatch({ 
+            type: 'SAVE_COMBO_PHOTO', 
+            payload: { 
+              key: comboId.toString(), 
+              photo: photoData 
+            } 
+          });
+        }
+        
         success('Photo uploaded successfully!');
         setUploadingPhoto(null);
       };

@@ -49,15 +49,18 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChange(async (firebaseUser) => {
       if (firebaseUser) {
+        console.log('AuthContext: Firebase user authenticated:', firebaseUser.uid);
         try {
           // Get additional user data from Firestore
           const userData = await getUserData(firebaseUser.uid);
+          console.log('AuthContext: User data loaded from Firestore:', userData);
           const user = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
             displayName: firebaseUser.displayName || userData.displayName,
             ...userData
           };
+          console.log('AuthContext: Final user object:', user);
           dispatch({ type: 'RESTORE_SESSION', payload: user });
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -71,9 +74,11 @@ export const AuthProvider = ({ children }) => {
             finisherCollection: [],
             recentCombinations: []
           };
+          console.log('AuthContext: Using fallback user data:', user);
           dispatch({ type: 'RESTORE_SESSION', payload: user });
         }
       } else {
+        console.log('AuthContext: No Firebase user, logging out');
         dispatch({ type: 'RESTORE_SESSION', payload: null });
       }
     });

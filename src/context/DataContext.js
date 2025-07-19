@@ -188,28 +188,101 @@ export const DataProvider = ({ children }) => {
             break;
           case 'ADD_COMBINATION':
             if (action.payload.used) {
+              console.log('DataContext: Processing combination with used=true:', {
+                id: action.payload.id,
+                hasPhotoFile: !!action.payload.photoFile,
+                hasPhoto: !!action.payload.photo,
+                photoFileType: action.payload.photoFile ? action.payload.photoFile.constructor.name : null,
+                photoType: action.payload.photo ? typeof action.payload.photo : null,
+                photoStartsWith: action.payload.photo ? action.payload.photo.substring(0, 20) + '...' : null
+              });
               let photoData = null;
               
               // Handle photo upload to Firebase Storage if there's a photo
               if (action.payload.photoFile) {
+                console.log('DataContext: Found photoFile, uploading to Firebase Storage:', {
+                  name: action.payload.photoFile.name,
+                  size: action.payload.photoFile.size,
+                  type: action.payload.photoFile.type
+                });
                 try {
                   // Upload the actual file to Firebase Storage
                   photoData = await uploadPhoto(user.uid, action.payload.photoFile, action.payload.id);
+                  console.log('DataContext: Photo uploaded successfully:', photoData);
                 } catch (error) {
                   console.error('Error uploading photo to Firebase Storage:', error);
                   // Continue without photo if upload fails
                 }
               } else if (action.payload.photo && action.payload.photo.startsWith('data:')) {
+                console.log('DataContext: Found base64 photo, uploading to Firebase Storage');
                 try {
                   // Fallback: If it's a data URL (base64), upload it to Firebase Storage
                   photoData = await uploadPhotoFromDataURL(user.uid, action.payload.photo, action.payload.id);
+                  console.log('DataContext: Base64 photo uploaded successfully:', photoData);
                 } catch (error) {
                   console.error('Error uploading photo from data URL to Firebase Storage:', error);
                   // Continue without photo if upload fails
                 }
+              } else {
+                console.log('DataContext: No photo found in combination payload', {
+                  hasPhotoFile: !!action.payload.photoFile,
+                  hasPhoto: !!action.payload.photo,
+                  photoValue: action.payload.photo
+                });
               }
               
+              console.log('DataContext: Adding combination to Firebase with photoData:', photoData);
               await addRecentCombination(user.uid, action.payload, photoData);
+            }
+            break;
+          case 'UPDATE_COMBINATION':
+            if (action.payload.updates.photoFile || action.payload.updates.photo) {
+              console.log('DataContext: Processing UPDATE_COMBINATION with photo:', {
+                id: action.payload.id,
+                hasPhotoFile: !!action.payload.updates.photoFile,
+                hasPhoto: !!action.payload.updates.photo
+              });
+              
+              let photoData = null;
+              
+              // Handle photo upload to Firebase Storage if there's a photo
+              if (action.payload.updates.photoFile) {
+                console.log('DataContext: Found photoFile in UPDATE_COMBINATION, uploading to Firebase Storage:', {
+                  name: action.payload.updates.photoFile.name,
+                  size: action.payload.updates.photoFile.size,
+                  type: action.payload.updates.photoFile.type
+                });
+                try {
+                  // Upload the actual file to Firebase Storage
+                  photoData = await uploadPhoto(user.uid, action.payload.updates.photoFile, action.payload.id);
+                  console.log('DataContext: Photo uploaded successfully in UPDATE_COMBINATION:', photoData);
+                } catch (error) {
+                  console.error('Error uploading photo to Firebase Storage in UPDATE_COMBINATION:', error);
+                  // Continue without photo if upload fails
+                }
+              } else if (action.payload.updates.photo && action.payload.updates.photo.startsWith('data:')) {
+                console.log('DataContext: Found base64 photo in UPDATE_COMBINATION, uploading to Firebase Storage');
+                try {
+                  // Fallback: If it's a data URL (base64), upload it to Firebase Storage
+                  photoData = await uploadPhotoFromDataURL(user.uid, action.payload.updates.photo, action.payload.id);
+                  console.log('DataContext: Base64 photo uploaded successfully in UPDATE_COMBINATION:', photoData);
+                } catch (error) {
+                  console.error('Error uploading photo from data URL to Firebase Storage in UPDATE_COMBINATION:', error);
+                  // Continue without photo if upload fails
+                }
+              }
+              
+              // Update the combination in Firebase with the photo data
+              if (photoData) {
+                const updatedCombination = {
+                  ...action.payload.updates,
+                  photoURL: photoData.url,
+                  photoPath: photoData.path
+                };
+                
+                console.log('DataContext: Updating combination in Firebase with photoData:', photoData);
+                await addRecentCombination(user.uid, updatedCombination, photoData);
+              }
             }
             break;
           case 'REMOVE_COMBINATION':
@@ -229,6 +302,20 @@ export const DataProvider = ({ children }) => {
   // Load data - Firebase if authenticated, localStorage if not
   useEffect(() => {
     if (isAuthenticated && user) {
+      console.log('DataContext: Loading data for authenticated user:', user.uid);
+      console.log('DataContext: User object keys:', Object.keys(user));
+      console.log('DataContext: polishCollection length:', user.polishCollection?.length || 0);
+      console.log('DataContext: topperCollection length:', user.topperCollection?.length || 0);
+      console.log('DataContext: finisherCollection length:', user.finisherCollection?.length || 0);
+      console.log('DataContext: recentCombinations length:', user.recentCombinations?.length || 0);
+      
+      if (user.polishCollection?.length > 0) {
+        console.log('DataContext: First polish:', user.polishCollection[0]);
+      }
+      if (user.recentCombinations?.length > 0) {
+        console.log('DataContext: First combination:', user.recentCombinations[0]);
+      }
+      
       // Load from Firebase user data (user object should have all fields after getUserData)
       const firebaseData = {
         nailPolishes: user.polishCollection || [],
@@ -241,8 +328,15 @@ export const DataProvider = ({ children }) => {
         customFinisherTypes: user.customFinisherTypes || [],
         comboPhotos: user.comboPhotos || {}
       };
+      console.log('DataContext: Final firebaseData lengths:', {
+        nailPolishes: firebaseData.nailPolishes.length,
+        toppers: firebaseData.toppers.length,
+        finishers: firebaseData.finishers.length,
+        usedCombinations: firebaseData.usedCombinations.length
+      });
       dispatch({ type: 'LOAD_DATA', payload: firebaseData });
     } else if (!isAuthenticated) {
+      console.log('DataContext: Loading data from localStorage for non-authenticated user');
       // Load from localStorage for non-authenticated users
       const savedData = {
         nailPolishes: JSON.parse(localStorage.getItem('nailPolishes')) || [],
@@ -255,6 +349,7 @@ export const DataProvider = ({ children }) => {
         customFinisherTypes: JSON.parse(localStorage.getItem('customFinisherTypes')) || [],
         usedCombinations: JSON.parse(localStorage.getItem('usedCombinations')) || []
       };
+      console.log('DataContext: localStorage data loaded:', savedData);
       dispatch({ type: 'LOAD_DATA', payload: savedData });
     }
   }, [isAuthenticated, user]);

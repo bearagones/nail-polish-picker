@@ -75,12 +75,26 @@ const PolishPicker = () => {
   const handleSaveCombination = async () => {
     if (!currentCombination) return;
 
+    console.log('PolishPicker: Saving combination with:', {
+      isUsed,
+      hasPhotoFile: !!photoFile,
+      hasPhotoPreview: !!photoPreview,
+      photoFile,
+      photoPreview: photoPreview ? 'base64 data present' : null
+    });
+
     const updatedCombination = {
       ...currentCombination,
       used: isUsed,
       ...(photoFile && isUsed && { photoFile: photoFile }), // Include actual file for Firebase Storage
       ...(photoPreview && isUsed && { photo: photoPreview }) // Include preview for display/localStorage
     };
+
+    console.log('PolishPicker: Final combination payload:', {
+      ...updatedCombination,
+      photoFile: updatedCombination.photoFile ? 'File object present' : null,
+      photo: updatedCombination.photo ? 'base64 data present' : null
+    });
 
     // Save the combination
     dispatch({ type: 'ADD_COMBINATION', payload: updatedCombination });
