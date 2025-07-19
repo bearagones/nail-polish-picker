@@ -251,14 +251,54 @@ export const DataProvider = ({ children }) => {
             }
             break;
           case 'UPDATE_COMBINATION':
-            if (action.payload.updates.photoFile || action.payload.updates.photo) {
-              console.log('DataContext: Processing UPDATE_COMBINATION with photo:', {
+            // Check if this is a photo deletion (photo: null)
+            if (action.payload.updates.photo === null) {
+              console.log('DataContext: Processing photo deletion for combination:', action.payload.id);
+              
+              // Find the existing combination to get photo path for deletion
+              const existingCombo = state.usedCombinations.find(c => c.id === action.payload.id);
+              if (existingCombo && existingCombo.photoPath) {
+                try {
+                  // Delete the photo from Firebase Storage
+                  await deletePhoto(existingCombo.photoPath);
+                  console.log('DataContext: Photo deleted from Firebase Storage');
+                } catch (error) {
+                  console.error('Error deleting photo from Firebase Storage:', error);
+                }
+              }
+              
+              // Update the combination in Firebase to remove photo references
+              const { photoFile, ...firestoreUpdates } = action.payload.updates;
+              await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates);
+            } else if (action.payload.updates.video === null) {
+              console.log('DataContext: Processing video deletion for combination:', action.payload.id);
+              
+              // Find the existing combination to get video path for deletion
+              const existingCombo = state.usedCombinations.find(c => c.id === action.payload.id);
+              if (existingCombo && existingCombo.videoPath) {
+                try {
+                  // Delete the video from Firebase Storage
+                  await deletePhoto(existingCombo.videoPath); // Using deletePhoto function for videos too
+                  console.log('DataContext: Video deleted from Firebase Storage');
+                } catch (error) {
+                  console.error('Error deleting video from Firebase Storage:', error);
+                }
+              }
+              
+              // Update the combination in Firebase to remove video references
+              const { videoFile, ...firestoreUpdates } = action.payload.updates;
+              await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates);
+            } else if (action.payload.updates.photoFile || action.payload.updates.photo || action.payload.updates.videoFile || action.payload.updates.video) {
+              console.log('DataContext: Processing UPDATE_COMBINATION with media:', {
                 id: action.payload.id,
                 hasPhotoFile: !!action.payload.updates.photoFile,
-                hasPhoto: !!action.payload.updates.photo
+                hasPhoto: !!action.payload.updates.photo,
+                hasVideoFile: !!action.payload.updates.videoFile,
+                hasVideo: !!action.payload.updates.video
               });
               
               let photoData = null;
+              let videoData = null;
               
               // Handle photo upload to Firebase Storage if there's a photo
               if (action.payload.updates.photoFile) {
@@ -300,18 +340,47 @@ export const DataProvider = ({ children }) => {
                   // Continue without photo if upload fails
                 }
               }
+
+              // Handle video upload to Firebase Storage if there's a video
+              if (action.payload.updates.videoFile) {
+                console.log('DataContext: Found videoFile in UPDATE_COMBINATION, uploading to Firebase Storage:', {
+                  name: action.payload.updates.videoFile.name,
+                  size: action.payload.updates.videoFile.size,
+                  type: action.payload.updates.videoFile.type
+                });
+                try {
+                  // Upload the actual video file to Firebase Storage (using uploadPhoto function which handles all file types)
+                  const uploadResult = await uploadPhoto(user.uid, action.payload.updates.videoFile, action.payload.id, 'video');
+                  console.log('DataContext: Video uploaded successfully in UPDATE_COMBINATION:', uploadResult);
+                  
+                  // Map the upload result to the expected videoData format
+                  videoData = {
+                    video: uploadResult.url,
+                    videoPath: uploadResult.path,
+                    videoFileName: uploadResult.fileName
+                  };
+                } catch (error) {
+                  console.error('Error uploading video to Firebase Storage in UPDATE_COMBINATION:', error);
+                  // Continue without video if upload fails
+                }
+              }
               
-              // Update the combination in Firebase with the photo data
-              if (photoData) {
-                console.log('DataContext: Updating combination in Firebase with photoData:', photoData);
-                // Filter out photoFile from updates since Firestore can't handle File objects
-                const { photoFile, ...firestoreUpdates } = action.payload.updates;
-                await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates, photoData);
+              // Update the combination in Firebase with the media data
+              const mediaData = { ...photoData, ...videoData };
+              if (Object.keys(mediaData).length > 0) {
+                console.log('DataContext: Updating combination in Firebase with mediaData:', mediaData);
+                // Filter out file objects from updates since Firestore can't handle File objects
+                const { photoFile, videoFile, ...firestoreUpdates } = action.payload.updates;
+                await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates, mediaData);
               } else {
-                // Update without photo data - also filter out photoFile
-                const { photoFile, ...firestoreUpdates } = action.payload.updates;
+                // Update without media data - also filter out file objects
+                const { photoFile, videoFile, ...firestoreUpdates } = action.payload.updates;
                 await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates);
               }
+            } else {
+              // Handle other updates that don't involve photos
+              const { photoFile, ...firestoreUpdates } = action.payload.updates;
+              await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates);
             }
             break;
           case 'REMOVE_COMBINATION':

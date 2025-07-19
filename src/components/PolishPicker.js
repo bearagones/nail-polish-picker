@@ -17,9 +17,12 @@ const PolishPicker = () => {
   const [currentCombination, setCurrentCombination] = useState(null);
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null);
   const [isUsed, setIsUsed] = useState(false);
   const [showAddTopper, setShowAddTopper] = useState(false);
   const [existingCombination, setExistingCombination] = useState(null);
+  const [expandedImage, setExpandedImage] = useState(null);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -52,6 +55,36 @@ const PolishPicker = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleVideoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Check file size (limit to 10MB for videos)
+      if (file.size > 10 * 1024 * 1024) {
+        success('Video size must be less than 10MB. Please choose a smaller video.', 'File Too Large');
+        return;
+      }
+
+      setVideoFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setVideoPreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeletePhoto = () => {
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    success('Photo removed successfully!');
+  };
+
+  const handleDeleteVideo = () => {
+    setVideoFile(null);
+    setVideoPreview(null);
+    success('Video removed successfully!');
   };
 
   const addTopperToResult = () => {
@@ -199,6 +232,8 @@ const PolishPicker = () => {
     setIsUsed(false);
     setPhotoFile(null);
     setPhotoPreview(null);
+    setVideoFile(null);
+    setVideoPreview(null);
     
     // Show add topper option if no topper was initially selected
     setShowAddTopper(!filters.includeTopper && !selectedTopper && toppers.length > 0);
@@ -322,8 +357,11 @@ const PolishPicker = () => {
                     maxHeight: '300px', 
                     borderRadius: '12px',
                     border: '3px solid #6FABD0',
-                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
-                  }} 
+                    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => setExpandedImage('existing')}
+                  title="Click to expand"
                 />
                 <p style={{ 
                   fontSize: '0.9rem', 
@@ -334,6 +372,24 @@ const PolishPicker = () => {
                   Used on {new Date(existingCombination.date).toLocaleDateString()}
                 </p>
               </div>
+              
+              {expandedImage === 'existing' && (
+                <div className="photo-modal" onClick={() => setExpandedImage(null)}>
+                  <div className="photo-modal-content" onClick={(e) => e.stopPropagation()}>
+                    <img 
+                      src={existingCombination.photoURL || existingCombination.photo || comboPhotos[existingCombination.id]} 
+                      alt="Previous combination photo expanded" 
+                      className="photo-expanded"
+                    />
+                    <button 
+                      className="close-modal-button"
+                      onClick={() => setExpandedImage(null)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -350,38 +406,152 @@ const PolishPicker = () => {
           )}
 
           <div className="combination-actions">
-            <div className="photo-upload-section">
-              <label htmlFor="photo-upload" className="photo-upload-label">
-                📷 Upload Photo (Optional)
-              </label>
-              <input
-                id="photo-upload"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                style={{ display: 'none' }}
-              />
-              {photoPreview && (
-                <div className="photo-preview">
-                  <img src={photoPreview} alt="Combination preview" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px' }} />
-                </div>
-              )}
+            <div className="photo-and-checkbox-row" style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '15px' }}>
+              <div className="upload-section" style={{ display: 'flex', gap: '15px' }}>
+                {!photoPreview && (
+                  <div className="photo-upload-section">
+                    <label htmlFor="photo-upload" className="photo-upload-label">
+                      📷 Upload Photo (Optional)
+                    </label>
+                    <input
+                      id="photo-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      style={{ display: 'none' }}
+                    />
+                  </div>
+                )}
+
+                {!videoPreview && (
+                  <div className="video-upload-section">
+                    <label htmlFor="video-upload" className="photo-upload-label">
+                      🎥 Upload Video (Optional)
+                    </label>
+                    <input
+                      id="video-upload"
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoUpload}
+                      style={{ display: 'none' }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="used-checkbox">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={isUsed}
+                    onChange={(e) => setIsUsed(e.target.checked)}
+                  />
+                  I used this combination
+                </label>
+              </div>
             </div>
 
-            <div className="used-checkbox">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={isUsed}
-                  onChange={(e) => setIsUsed(e.target.checked)}
+            {photoPreview && (
+              <div className="photo-preview" style={{ marginBottom: '15px', position: 'relative', display: 'inline-block' }}>
+                <img 
+                  src={photoPreview} 
+                  alt="Combination preview" 
+                  style={{ 
+                    maxWidth: '200px', 
+                    maxHeight: '200px', 
+                    borderRadius: '8px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => setExpandedImage('preview')}
+                  title="Click to expand"
                 />
-                I used this combination
-              </label>
-            </div>
+                <button 
+                  className="delete-photo-button"
+                  onClick={handleDeletePhoto}
+                  title="Delete photo"
+                  style={{
+                    position: 'absolute',
+                    top: '5px',
+                    right: '5px',
+                    background: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ✕
+                </button>
+                
+                {expandedImage === 'preview' && (
+                  <div className="photo-modal" onClick={() => setExpandedImage(null)}>
+                    <div className="photo-modal-content" onClick={(e) => e.stopPropagation()}>
+                      <img 
+                        src={photoPreview} 
+                        alt="Combination preview expanded" 
+                        className="photo-expanded"
+                      />
+                      <button 
+                        className="close-modal-button"
+                        onClick={() => setExpandedImage(null)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
-            <button className="save-combination-button" onClick={handleSaveCombination}>
-              {isUsed ? 'Save to Recent Combinations' : 'Generate Another'}
-            </button>
+            {videoPreview && (
+              <div className="video-preview" style={{ marginBottom: '15px', position: 'relative', display: 'inline-block' }}>
+                <video 
+                  src={videoPreview} 
+                  controls
+                  style={{ 
+                    maxWidth: '200px', 
+                    maxHeight: '200px', 
+                    borderRadius: '8px'
+                  }}
+                  title="Video preview"
+                />
+                <button 
+                  className="delete-video-button"
+                  onClick={handleDeleteVideo}
+                  title="Delete video"
+                  style={{
+                    position: 'absolute',
+                    top: '5px',
+                    right: '5px',
+                    background: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {isUsed && (
+              <button className="save-combination-button" onClick={handleSaveCombination}>
+                Save to Recent Combinations
+              </button>
+            )}
           </div>
         </div>
       )}

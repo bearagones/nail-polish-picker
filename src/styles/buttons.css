@@ -63,7 +63,7 @@
     padding: 12px;
     background: transparent;
     color: #6FABD0;
-    border: 2px solid #6FABD0;
+    border: 2px dashed #6FABD0;
     border-radius: 10px;
     font-size: 1rem;
     font-weight: 600;
@@ -77,13 +77,15 @@
 }
 
 .add-polish-toggle:hover {
-    background: #6FABD0;
+    background: linear-gradient(135deg, #6FABD0, #92C0D7);
     color: white;
+    border-style: solid;
 }
 
 .add-topper-toggle:hover {
-    background: #99CEBE;
+    background: linear-gradient(135deg, #99CEBE, #BDE6E2);
     color: white;
+    border-style: solid;
 }
 
 .save-button {
