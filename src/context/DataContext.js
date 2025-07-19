@@ -367,14 +367,20 @@ export const DataProvider = ({ children }) => {
               
               // Update the combination in Firebase with the media data
               const mediaData = { ...photoData, ...videoData };
+              
+              // Filter out file objects and undefined values from updates since Firestore can't handle them
+              const { photoFile, videoFile, ...rawUpdates } = action.payload.updates;
+              
+              // Remove any undefined values from the updates object
+              const firestoreUpdates = Object.fromEntries(
+                Object.entries(rawUpdates).filter(([key, value]) => value !== undefined)
+              );
+              
               if (Object.keys(mediaData).length > 0) {
                 console.log('DataContext: Updating combination in Firebase with mediaData:', mediaData);
-                // Filter out file objects from updates since Firestore can't handle File objects
-                const { photoFile, videoFile, ...firestoreUpdates } = action.payload.updates;
                 await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates, mediaData);
               } else {
-                // Update without media data - also filter out file objects
-                const { photoFile, videoFile, ...firestoreUpdates } = action.payload.updates;
+                console.log('DataContext: Updating combination in Firebase without media data');
                 await updateRecentCombination(user.uid, action.payload.id, firestoreUpdates);
               }
             } else {

@@ -162,7 +162,7 @@ export const removeFinisherFromCollection = async (userId, finisherId) => {
 };
 
 // Add combination to recent combinations
-export const addRecentCombination = async (userId, combination, photoData = null) => {
+export const addRecentCombination = async (userId, combination, mediaData = null) => {
   try {
     await initializeUserDocument(userId);
     const userRef = doc(db, "users", userId);
@@ -172,20 +172,28 @@ export const addRecentCombination = async (userId, combination, photoData = null
       const userData = userDoc.data();
       let recentCombinations = userData.recentCombinations || [];
       
-      // Add new combination to the beginning with photo data if provided
-      const combinationWithPhoto = {
+      // Add new combination to the beginning with media data if provided
+      const combinationWithMedia = {
         ...combination,
         id: combination.id || Date.now().toString(),
         createdAt: new Date().toISOString(),
-        ...(photoData && {
-          photo: photoData.photo,
-          photoPath: photoData.photoPath,
-          photoFileName: photoData.photoFileName
+        ...(mediaData && {
+          // Photo data
+          ...(mediaData.photo && {
+            photo: mediaData.photo,
+            photoPath: mediaData.photoPath,
+            photoFileName: mediaData.photoFileName
+          }),
+          // Video data
+          ...(mediaData.video && {
+            video: mediaData.video,
+            videoPath: mediaData.videoPath,
+            videoFileName: mediaData.videoFileName
+          })
         })
-
       };
       
-      recentCombinations.unshift(combinationWithPhoto);
+      recentCombinations.unshift(combinationWithMedia);
       
       // Keep only the last 10 combinations
       if (recentCombinations.length > 10) {
@@ -197,9 +205,14 @@ export const addRecentCombination = async (userId, combination, photoData = null
         updatedAt: new Date().toISOString()
       });
       
-      console.log('Firestore: Successfully added combination with photo data:', {
-        combinationId: combinationWithPhoto.id,
-        photoData: photoData ? { url: photoData.url, path: photoData.path } : null
+      console.log('Firestore: Successfully added combination with media data:', {
+        combinationId: combinationWithMedia.id,
+        mediaData: mediaData ? { 
+          photoUrl: mediaData.photo ? 'present' : null, 
+          videoUrl: mediaData.video ? 'present' : null,
+          photoPath: mediaData.photoPath,
+          videoPath: mediaData.videoPath
+        } : null
       });
     }
   } catch (error) {
@@ -209,7 +222,7 @@ export const addRecentCombination = async (userId, combination, photoData = null
 };
 
 // Update existing combination in recent combinations
-export const updateRecentCombination = async (userId, combinationId, updates, photoData = null) => {
+export const updateRecentCombination = async (userId, combinationId, updates, mediaData = null) => {
   try {
     const userRef = doc(db, "users", userId);
     const userDoc = await getDoc(userRef);
@@ -225,10 +238,19 @@ export const updateRecentCombination = async (userId, combinationId, updates, ph
             ...combo,
             ...updates,
             updatedAt: new Date().toISOString(),
-            ...(photoData && {
-              photo: photoData.photo,
-              photoPath: photoData.photoPath,
-              photoFileName: photoData.photoFileName
+            ...(mediaData && {
+              // Photo data
+              ...(mediaData.photo && {
+                photo: mediaData.photo,
+                photoPath: mediaData.photoPath,
+                photoFileName: mediaData.photoFileName
+              }),
+              // Video data
+              ...(mediaData.video && {
+                video: mediaData.video,
+                videoPath: mediaData.videoPath,
+                videoFileName: mediaData.videoFileName
+              })
             })
           };
         }
@@ -240,9 +262,14 @@ export const updateRecentCombination = async (userId, combinationId, updates, ph
         updatedAt: new Date().toISOString()
       });
       
-      console.log('Firestore: Successfully updated combination with photo data:', {
+      console.log('Firestore: Successfully updated combination with media data:', {
         combinationId,
-        photoData: photoData ? { url: photoData.url, path: photoData.path } : null
+        mediaData: mediaData ? { 
+          photoUrl: mediaData.photo ? 'present' : null, 
+          videoUrl: mediaData.video ? 'present' : null,
+          photoPath: mediaData.photoPath,
+          videoPath: mediaData.videoPath
+        } : null
       });
     }
   } catch (error) {

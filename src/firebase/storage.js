@@ -1,15 +1,15 @@
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { storage } from "./config";
 
-// Upload photo to Firebase Storage
-export const uploadPhoto = async (userId, file, combinationId) => {
+// Upload photo or video to Firebase Storage
+export const uploadPhoto = async (userId, file, combinationId, mediaType = 'photo') => {
   try {
     // Create a unique filename with timestamp
     const timestamp = Date.now();
     const fileExtension = file.name.split('.').pop();
     const fileName = `combination_${combinationId}_${timestamp}.${fileExtension}`;
     
-    // Create a reference to the file location
+    // Use the same folder structure for both photos and videos to avoid permission issues
     const storageRef = ref(storage, `users/${userId}/combination-photos/${fileName}`);
     
     // Upload the file
@@ -24,8 +24,8 @@ export const uploadPhoto = async (userId, file, combinationId) => {
       fileName: fileName
     };
   } catch (error) {
-    console.error("Error uploading photo:", error);
-    throw new Error(`Failed to upload photo: ${error.message}`);
+    console.error(`Error uploading ${mediaType}:`, error);
+    throw new Error(`Failed to upload ${mediaType}: ${error.message}`);
   }
 };
 

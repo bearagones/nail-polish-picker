@@ -60,9 +60,9 @@ const PolishPicker = () => {
   const handleVideoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (limit to 10MB for videos)
-      if (file.size > 10 * 1024 * 1024) {
-        success('Video size must be less than 10MB. Please choose a smaller video.', 'File Too Large');
+      // Check file size (limit to 5MB for videos)
+      if (file.size > 5 * 1024 * 1024) {
+        success('Video size must be less than 5MB. Please choose a smaller video.', 'File Too Large');
         return;
       }
 
@@ -78,13 +78,11 @@ const PolishPicker = () => {
   const handleDeletePhoto = () => {
     setPhotoFile(null);
     setPhotoPreview(null);
-    success('Photo removed successfully!');
   };
 
   const handleDeleteVideo = () => {
     setVideoFile(null);
     setVideoPreview(null);
-    success('Video removed successfully!');
   };
 
   const addTopperToResult = () => {

@@ -60,7 +60,6 @@ const Combinations = () => {
               } 
             });
           }
-          success('Photo uploaded successfully!');
         } catch (error) {
           console.error('Error uploading photo:', error);
           success('Error uploading photo. Please try again.', 'Error');
@@ -138,9 +137,9 @@ const Combinations = () => {
   const handleVideoUpload = async (e, comboId) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (limit to 50MB for videos)
-      if (file.size > 50 * 1024 * 1024) {
-        success('Video size must be less than 50MB. Please choose a smaller video.', 'File Too Large');
+      // Check file size (limit to 5MB for videos)
+      if (file.size > 5 * 1024 * 1024) {
+        success('Video size must be less than 5MB. Please choose a smaller video.', 'File Too Large');
         return;
       }
 
@@ -173,7 +172,6 @@ const Combinations = () => {
             } 
           });
         }
-        success('Video uploaded successfully!');
       } catch (error) {
         console.error('Error uploading video:', error);
         success('Error uploading video. Please try again.', 'Error');
@@ -267,7 +265,6 @@ const Combinations = () => {
           payload: comboId.toString() 
         });
       }
-      success('Photo deleted successfully!');
     } catch (error) {
       console.error('Error deleting photo:', error);
       success('Error deleting photo. Please try again.', 'Error');
@@ -303,7 +300,6 @@ const Combinations = () => {
           } 
         });
       }
-      success('Video deleted successfully!');
     } catch (error) {
       console.error('Error deleting video:', error);
       success('Error deleting video. Please try again.', 'Error');
