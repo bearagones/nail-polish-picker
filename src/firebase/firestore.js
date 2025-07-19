@@ -178,7 +178,7 @@ export const addRecentCombination = async (userId, combination, photoData = null
         id: combination.id || Date.now().toString(),
         createdAt: new Date().toISOString(),
         ...(photoData && { 
-          photoURL: photoData.url,
+          photo: photoData.url,
           photoPath: photoData.path,
           photoFileName: photoData.fileName
         })
@@ -194,6 +194,11 @@ export const addRecentCombination = async (userId, combination, photoData = null
       await updateDoc(userRef, {
         recentCombinations: recentCombinations,
         updatedAt: new Date().toISOString()
+      });
+      
+      console.log('Firestore: Successfully added combination with photo data:', {
+        combinationId: combinationWithPhoto.id,
+        photoData: photoData ? { url: photoData.url, path: photoData.path } : null
       });
     }
   } catch (error) {
@@ -220,7 +225,7 @@ export const updateRecentCombination = async (userId, combinationId, updates, ph
             ...updates,
             updatedAt: new Date().toISOString(),
             ...(photoData && { 
-              photoURL: photoData.url,
+              photo: photoData.url,
               photoPath: photoData.path,
               photoFileName: photoData.fileName
             })
