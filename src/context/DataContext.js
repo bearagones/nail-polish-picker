@@ -8,6 +8,7 @@ import {
   addFinisherToCollection,
   removeFinisherFromCollection,
   addRecentCombination,
+  updateRecentCombination,
   removeRecentCombination
 } from '../firebase/firestore';
 import { uploadPhoto, uploadPhotoFromDataURL, deletePhoto } from '../firebase/storage';
@@ -274,14 +275,11 @@ export const DataProvider = ({ children }) => {
               
               // Update the combination in Firebase with the photo data
               if (photoData) {
-                const updatedCombination = {
-                  ...action.payload.updates,
-                  photoURL: photoData.url,
-                  photoPath: photoData.path
-                };
-                
                 console.log('DataContext: Updating combination in Firebase with photoData:', photoData);
-                await addRecentCombination(user.uid, updatedCombination, photoData);
+                await updateRecentCombination(user.uid, action.payload.id, action.payload.updates, photoData);
+              } else {
+                // Update without photo data
+                await updateRecentCombination(user.uid, action.payload.id, action.payload.updates);
               }
             }
             break;

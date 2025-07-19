@@ -202,6 +202,49 @@ export const addRecentCombination = async (userId, combination, photoData = null
   }
 };
 
+// Update existing combination in recent combinations
+export const updateRecentCombination = async (userId, combinationId, updates, photoData = null) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const recentCombinations = userData.recentCombinations || [];
+      
+      // Find and update the specific combination
+      const updatedCombinations = recentCombinations.map(combo => {
+        if (combo.id === combinationId) {
+          return {
+            ...combo,
+            ...updates,
+            updatedAt: new Date().toISOString(),
+            ...(photoData && { 
+              photoURL: photoData.url,
+              photoPath: photoData.path,
+              photoFileName: photoData.fileName
+            })
+          };
+        }
+        return combo;
+      });
+      
+      await updateDoc(userRef, {
+        recentCombinations: updatedCombinations,
+        updatedAt: new Date().toISOString()
+      });
+      
+      console.log('Firestore: Successfully updated combination with photo data:', {
+        combinationId,
+        photoData: photoData ? { url: photoData.url, path: photoData.path } : null
+      });
+    }
+  } catch (error) {
+    console.error("Error updating recent combination:", error);
+    throw new Error(error.message);
+  }
+};
+
 // Remove combination from recent combinations
 export const removeRecentCombination = async (userId, combinationId) => {
   try {

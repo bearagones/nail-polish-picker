@@ -9,6 +9,8 @@ const Combinations = () => {
   const { isAuthenticated } = useAuth();
   const [uploadingPhoto, setUploadingPhoto] = useState(null);
   const [expandedImage, setExpandedImage] = useState(null);
+  const [pendingPhotos, setPendingPhotos] = useState({}); // Store pending photos before save
+  const [savingPhoto, setSavingPhoto] = useState(null);
 
   const handleDeleteCombination = async (id) => {
     const confirmed = await confirm('Are you sure you want to delete this combination?');
@@ -32,33 +34,17 @@ const Combinations = () => {
         const photoData = e.target.result;
         
         if (isAuthenticated) {
-          // For authenticated users, update the combination with photo data
-          // This will trigger Firebase Storage upload via the DataContext
-          const existingCombo = usedCombinations.find(combo => combo.id === comboId);
-          if (existingCombo) {
-            const updatedCombo = {
-              ...existingCombo,
-              photoFile: file, // Include actual file for Firebase Storage
-              photo: photoData // Include preview for display
-            };
-            
-            console.log('Combinations: Updating combination with photo for authenticated user:', {
-              comboId,
-              hasPhotoFile: !!updatedCombo.photoFile,
-              hasPhoto: !!updatedCombo.photo
-            });
-            
-            // Use UPDATE_COMBINATION to trigger Firebase sync
-            dispatch({ 
-              type: 'UPDATE_COMBINATION', 
-              payload: { 
-                id: comboId, 
-                updates: updatedCombo 
-              } 
-            });
-          }
+          // For authenticated users, store as pending photo first
+          setPendingPhotos(prev => ({
+            ...prev,
+            [comboId]: {
+              file: file,
+              preview: photoData
+            }
+          }));
+          success('Photo selected! Click "Save Photo" to save it permanently.');
         } else {
-          // For non-authenticated users, save to local storage
+          // For non-authenticated users, save to local storage immediately
           dispatch({ 
             type: 'SAVE_COMBO_PHOTO', 
             payload: { 
@@ -66,13 +52,69 @@ const Combinations = () => {
               photo: photoData 
             } 
           });
+          success('Photo uploaded successfully!');
         }
         
-        success('Photo uploaded successfully!');
         setUploadingPhoto(null);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleSavePhoto = async (comboId) => {
+    const pendingPhoto = pendingPhotos[comboId];
+    if (!pendingPhoto) return;
+
+    setSavingPhoto(comboId);
+    
+    try {
+      const existingCombo = usedCombinations.find(combo => combo.id === comboId);
+      if (existingCombo) {
+        const updatedCombo = {
+          ...existingCombo,
+          photoFile: pendingPhoto.file, // Include actual file for Firebase Storage
+          photo: pendingPhoto.preview // Include preview for display
+        };
+        
+        console.log('Combinations: Saving photo for authenticated user:', {
+          comboId,
+          hasPhotoFile: !!updatedCombo.photoFile,
+          hasPhoto: !!updatedCombo.photo
+        });
+        
+        // Use UPDATE_COMBINATION to trigger Firebase sync
+        await dispatch({ 
+          type: 'UPDATE_COMBINATION', 
+          payload: { 
+            id: comboId, 
+            updates: updatedCombo 
+          } 
+        });
+
+        // Remove from pending photos
+        setPendingPhotos(prev => {
+          const newPending = { ...prev };
+          delete newPending[comboId];
+          return newPending;
+        });
+
+        success('Photo saved successfully!');
+      }
+    } catch (error) {
+      console.error('Error saving photo:', error);
+      success('Error saving photo. Please try again.', 'Error');
+    } finally {
+      setSavingPhoto(null);
+    }
+  };
+
+  const handleCancelPhoto = (comboId) => {
+    setPendingPhotos(prev => {
+      const newPending = { ...prev };
+      delete newPending[comboId];
+      return newPending;
+    });
+    success('Photo upload cancelled.');
   };
 
   const handleImageClick = (comboId) => {
@@ -171,8 +213,38 @@ const Combinations = () => {
                 </div>
 
                 <div className="combination-photo">
-                  {/* Check for photo in combination object (Firebase photoURL) or comboPhotos object (localStorage) */}
-                  {(combo.photoURL || combo.photo || comboPhotos[combo.id]) ? (
+                  {/* Check for pending photo first */}
+                  {pendingPhotos[combo.id] ? (
+                    <div className="photo-pending">
+                      <div className="photo-preview-container">
+                        <img 
+                          src={pendingPhotos[combo.id].preview} 
+                          alt="Photo preview" 
+                          className="photo-thumbnail"
+                          style={{ opacity: 0.8 }}
+                        />
+                        <div className="photo-pending-overlay">
+                          <span>Photo Preview</span>
+                        </div>
+                      </div>
+                      <div className="photo-actions">
+                        <button 
+                          className="save-photo-button"
+                          onClick={() => handleSavePhoto(combo.id)}
+                          disabled={savingPhoto === combo.id}
+                        >
+                          {savingPhoto === combo.id ? 'Saving...' : 'Save Photo'}
+                        </button>
+                        <button 
+                          className="cancel-photo-button"
+                          onClick={() => handleCancelPhoto(combo.id)}
+                          disabled={savingPhoto === combo.id}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (combo.photoURL || combo.photo || comboPhotos[combo.id]) ? (
                     <div className="photo-display">
                       <div className="photo-thumbnail-container">
                         <img 
