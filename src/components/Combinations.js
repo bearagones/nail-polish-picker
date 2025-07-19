@@ -70,19 +70,17 @@ const Combinations = () => {
     try {
       const existingCombo = usedCombinations.find(combo => combo.id === comboId);
       if (existingCombo) {
-        // 1. Upload to Firebase Storage
         const storageRef = ref(storage, `users/${authUser.uid}/combination-photos/combination_${comboId}.jpg`);
         await uploadBytes(storageRef, pendingPhoto.file);
 
-        // 2. Get download URL
         const downloadURL = await getDownloadURL(storageRef);
 
-        // 3. Update combination with photo URL
         const updatedCombo = {
           ...existingCombo,
           photoURL: downloadURL
         };
 
+        // 1. Update local state
         await dispatch({
           type: 'UPDATE_COMBINATION',
           payload: {
@@ -91,7 +89,14 @@ const Combinations = () => {
           }
         });
 
-        // 4. Clean up pending photo
+        // 2. Update Firestore
+        await updateDoc(doc(db, 'users', authUser.uid), {
+          recentCombinations: usedCombinations.map(combo =>
+            combo.id === comboId ? updatedCombo : combo
+          )
+        });
+
+        // 3. Clean up
         setPendingPhotos(prev => {
           const newPending = { ...prev };
           delete newPending[comboId];
@@ -107,6 +112,7 @@ const Combinations = () => {
       setSavingPhoto(null);
     }
   };
+
 
   const handleCancelPhoto = (comboId) => {
     setPendingPhotos(prev => {
