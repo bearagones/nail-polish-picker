@@ -177,11 +177,12 @@ export const addRecentCombination = async (userId, combination, photoData = null
         ...combination,
         id: combination.id || Date.now().toString(),
         createdAt: new Date().toISOString(),
-        ...(photoData && { 
-          photo: photoData.url,
-          photoPath: photoData.path,
-          photoFileName: photoData.fileName
+        ...(photoData && {
+          photo: photoData.photo,
+          photoPath: photoData.photoPath,
+          photoFileName: photoData.photoFileName
         })
+
       };
       
       recentCombinations.unshift(combinationWithPhoto);
@@ -224,10 +225,10 @@ export const updateRecentCombination = async (userId, combinationId, updates, ph
             ...combo,
             ...updates,
             updatedAt: new Date().toISOString(),
-            ...(photoData && { 
-              photo: photoData.url,
-              photoPath: photoData.path,
-              photoFileName: photoData.fileName
+            ...(photoData && {
+              photo: photoData.photo,
+              photoPath: photoData.photoPath,
+              photoFileName: photoData.photoFileName
             })
           };
         }

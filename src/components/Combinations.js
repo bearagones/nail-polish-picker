@@ -66,32 +66,32 @@ const Combinations = () => {
     if (!pendingPhoto) return;
 
     setSavingPhoto(comboId);
-    
+
     try {
       const existingCombo = usedCombinations.find(combo => combo.id === comboId);
       if (existingCombo) {
+        // 1. Upload to Firebase Storage
+        const storageRef = ref(storage, `users/${authUser.uid}/combination-photos/combination_${comboId}.jpg`);
+        await uploadBytes(storageRef, pendingPhoto.file);
+
+        // 2. Get download URL
+        const downloadURL = await getDownloadURL(storageRef);
+
+        // 3. Update combination with photo URL
         const updatedCombo = {
           ...existingCombo,
-          photoFile: pendingPhoto.file, // Include actual file for Firebase Storage
-          photo: pendingPhoto.preview // Include preview for display
+          photoURL: downloadURL
         };
-        
-        console.log('Combinations: Saving photo for authenticated user:', {
-          comboId,
-          hasPhotoFile: !!updatedCombo.photoFile,
-          hasPhoto: !!updatedCombo.photo
-        });
-        
-        // Use UPDATE_COMBINATION to trigger Firebase sync
-        await dispatch({ 
-          type: 'UPDATE_COMBINATION', 
-          payload: { 
-            id: comboId, 
-            updates: updatedCombo 
-          } 
+
+        await dispatch({
+          type: 'UPDATE_COMBINATION',
+          payload: {
+            id: comboId,
+            updates: updatedCombo
+          }
         });
 
-        // Remove from pending photos
+        // 4. Clean up pending photo
         setPendingPhotos(prev => {
           const newPending = { ...prev };
           delete newPending[comboId];
