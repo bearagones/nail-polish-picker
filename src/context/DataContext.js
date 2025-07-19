@@ -208,8 +208,15 @@ export const DataProvider = ({ children }) => {
                 });
                 try {
                   // Upload the actual file to Firebase Storage
-                  photoData = await uploadPhoto(user.uid, action.payload.photoFile, action.payload.id);
-                  console.log('DataContext: Photo uploaded successfully:', photoData);
+                  const uploadResult = await uploadPhoto(user.uid, action.payload.photoFile, action.payload.id);
+                  console.log('DataContext: Photo uploaded successfully:', uploadResult);
+                  
+                  // Map the upload result to the expected photoData format
+                  photoData = {
+                    photo: uploadResult.url,
+                    photoPath: uploadResult.path,
+                    photoFileName: uploadResult.fileName
+                  };
                 } catch (error) {
                   console.error('Error uploading photo to Firebase Storage:', error);
                   // Continue without photo if upload fails
@@ -218,8 +225,15 @@ export const DataProvider = ({ children }) => {
                 console.log('DataContext: Found base64 photo, uploading to Firebase Storage');
                 try {
                   // Fallback: If it's a data URL (base64), upload it to Firebase Storage
-                  photoData = await uploadPhotoFromDataURL(user.uid, action.payload.photo, action.payload.id);
-                  console.log('DataContext: Base64 photo uploaded successfully:', photoData);
+                  const uploadResult = await uploadPhotoFromDataURL(user.uid, action.payload.photo, action.payload.id);
+                  console.log('DataContext: Base64 photo uploaded successfully:', uploadResult);
+                  
+                  // Map the upload result to the expected photoData format
+                  photoData = {
+                    photo: uploadResult.url,
+                    photoPath: uploadResult.path,
+                    photoFileName: uploadResult.fileName
+                  };
                 } catch (error) {
                   console.error('Error uploading photo from data URL to Firebase Storage:', error);
                   // Continue without photo if upload fails
@@ -255,8 +269,15 @@ export const DataProvider = ({ children }) => {
                 });
                 try {
                   // Upload the actual file to Firebase Storage
-                  photoData = await uploadPhoto(user.uid, action.payload.updates.photoFile, action.payload.id);
-                  console.log('DataContext: Photo uploaded successfully in UPDATE_COMBINATION:', photoData);
+                  const uploadResult = await uploadPhoto(user.uid, action.payload.updates.photoFile, action.payload.id);
+                  console.log('DataContext: Photo uploaded successfully in UPDATE_COMBINATION:', uploadResult);
+                  
+                  // Map the upload result to the expected photoData format
+                  photoData = {
+                    photo: uploadResult.url,
+                    photoPath: uploadResult.path,
+                    photoFileName: uploadResult.fileName
+                  };
                 } catch (error) {
                   console.error('Error uploading photo to Firebase Storage in UPDATE_COMBINATION:', error);
                   // Continue without photo if upload fails
@@ -265,8 +286,15 @@ export const DataProvider = ({ children }) => {
                 console.log('DataContext: Found base64 photo in UPDATE_COMBINATION, uploading to Firebase Storage');
                 try {
                   // Fallback: If it's a data URL (base64), upload it to Firebase Storage
-                  photoData = await uploadPhotoFromDataURL(user.uid, action.payload.updates.photo, action.payload.id);
-                  console.log('DataContext: Base64 photo uploaded successfully in UPDATE_COMBINATION:', photoData);
+                  const uploadResult = await uploadPhotoFromDataURL(user.uid, action.payload.updates.photo, action.payload.id);
+                  console.log('DataContext: Base64 photo uploaded successfully in UPDATE_COMBINATION:', uploadResult);
+                  
+                  // Map the upload result to the expected photoData format
+                  photoData = {
+                    photo: uploadResult.url,
+                    photoPath: uploadResult.path,
+                    photoFileName: uploadResult.fileName
+                  };
                 } catch (error) {
                   console.error('Error uploading photo from data URL to Firebase Storage in UPDATE_COMBINATION:', error);
                   // Continue without photo if upload fails
