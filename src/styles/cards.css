@@ -215,6 +215,67 @@
     display: inline-block;
 }
 
+/* Progress Bar Styles */
+.progress-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 2px solid #e9ecef;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.progress-label {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #295982;
+}
+
+.progress-stats {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.progress-percentage {
+    color: #295982;
+    font-weight: 600;
+}
+
+.progress-bar-wrapper {
+    background: #e9ecef;
+    border-radius: 10px;
+    height: 30px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #295982, #6FABD0, #92C0D7);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-text {
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
 /* Combination Cards */
 .combination-card {
     background: #f8f9fa;

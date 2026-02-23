@@ -1,6 +1,6 @@
 # Nail Polish Picker
 
-A React application to help you randomly pick nail polish colors from your collection.
+A desktop and web application to help you randomly pick nail polish colors from your collection. Built with React and Tauri for a native desktop experience.
 
 ## Features
 
@@ -63,6 +63,60 @@ npm start
 ```
 
 The app will open at [http://localhost:3000](http://localhost:3000)
+
+## Desktop Application (Tauri)
+
+This application can also run as a native desktop application using Tauri.
+
+### Prerequisites
+
+- **Rust**: Install from [https://rustup.rs/](https://rustup.rs/)
+- **Node.js**: Version 18 or higher
+- **System Dependencies** (Windows): WebView2 (usually pre-installed on Windows 10/11)
+
+### Running the Desktop App (Development)
+
+```bash
+npm run tauri:dev
+```
+
+This will:
+1. Start the React development server
+2. Build the Rust backend
+3. Launch the desktop application with hot-reload
+
+The desktop app will automatically open with DevTools in development mode.
+
+### Building the Desktop App (Production)
+
+```bash
+npm run tauri:build
+```
+
+The installer will be created in:
+- **Windows**: `src-tauri/target/release/bundle/msi/` or `src-tauri/target/release/bundle/nsis/`
+- **macOS**: `src-tauri/target/release/bundle/dmg/`
+- **Linux**: `src-tauri/target/release/bundle/deb/` or `src-tauri/target/release/bundle/appimage/`
+
+### Desktop App Features
+
+✅ **Offline Support**: Works without internet (local storage)
+✅ **Native Performance**: Faster than web browser
+✅ **System Integration**: Desktop icons, notifications
+✅ **Secure**: Sandboxed environment
+✅ **Cross-Platform**: Windows, macOS, Linux
+
+### Troubleshooting Desktop App
+
+If you encounter issues with the desktop app:
+
+1. **Build Errors**: Make sure Rust is installed and updated
+   ```bash
+   rustup update
+   ```
+
+2. **WebView Issues (Windows)**: Ensure WebView2 is installed
+   - Download from: https://developer.microsoft.com/en-us/microsoft-edge/webview2/
 
 ## Deployment
 

@@ -8,7 +8,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
   },
   "keywords": [
     "react",
@@ -22,6 +25,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.10.1",
     "firebase": "^11.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -29,6 +33,7 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.10.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0"

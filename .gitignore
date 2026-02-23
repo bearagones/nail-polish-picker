@@ -34,3 +34,8 @@ yarn-error.log*
 
 # OS generated files
 Thumbs.db
+
+# Tauri
+/src-tauri/target
+/src-tauri/Cargo.lock
+/src-tauri/WixTools

@@ -560,6 +560,29 @@ const Combinations = () => {
     }
   };
 
+  // Calculate progress
+  const totalPolishes = nailPolishes.length;
+  const totalFinishers = finishers.length;
+  const totalToppers = toppers.length;
+  
+  // Total possible combinations: polishes × finishers × (1 + toppers)
+  // The (1 + toppers) accounts for combinations with no topper plus each topper option
+  const totalPossibleCombinations = totalPolishes * totalFinishers * (1 + totalToppers);
+  
+  // Count unique combinations used (based on polish + topper + finisher)
+  const uniqueCombinationsUsed = new Set(
+    usedCombinationsOnly.map(combo => {
+      const polishId = `${combo.polish.name}-${combo.polish.brand}`;
+      const topperId = combo.topper ? `${combo.topper.name}-${combo.topper.brand}` : 'none';
+      const finisherId = combo.finisher ? `${combo.finisher.name}-${combo.finisher.brand}` : 'none';
+      return `${polishId}|${topperId}|${finisherId}`;
+    })
+  ).size;
+  
+  const progressPercentage = totalPossibleCombinations > 0 
+    ? Math.round((uniqueCombinationsUsed / totalPossibleCombinations) * 100) 
+    : 0;
+
   return (
     <div>
       <div className="combinations-header">
@@ -572,6 +595,27 @@ const Combinations = () => {
           ➕ Add Combination
         </button>
       </div>
+      
+      {/* Progress Bar */}
+      {totalPossibleCombinations > 0 && (
+        <div className="progress-container">
+          <div className="progress-info">
+            <span className="progress-label">Collection Progress</span>
+            <span className="progress-stats">
+              {uniqueCombinationsUsed} / {totalPossibleCombinations} combinations tried
+              <span className="progress-percentage"> ({progressPercentage}%)</span>
+            </span>
+          </div>
+          <div className="progress-bar-wrapper">
+            <div 
+              className="progress-bar-fill" 
+              style={{ width: `${progressPercentage}%` }}
+            >
+              {progressPercentage > 5 && <span className="progress-text">{progressPercentage}%</span>}
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Add Combination Form */}
       {showAddForm && (
