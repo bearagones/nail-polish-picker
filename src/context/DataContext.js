@@ -116,6 +116,24 @@ function dataReducer(state, action) {
             : p
         )
       };
+    case 'UPDATE_POLISH_RATING':
+      return {
+        ...state,
+        nailPolishes: state.nailPolishes.map(p =>
+          p.name === action.payload.name && p.brand === action.payload.brand
+            ? { ...p, rating: action.payload.rating }
+            : p
+        )
+      };
+    case 'UPDATE_POLISH_COMMENT':
+      return {
+        ...state,
+        nailPolishes: state.nailPolishes.map(p =>
+          p.name === action.payload.name && p.brand === action.payload.brand
+            ? { ...p, comment: action.payload.comment }
+            : p
+        )
+      };
     case 'SAVE_COMBO_PHOTO':
       return { ...state, comboPhotos: { ...state.comboPhotos, [action.payload.key]: action.payload.photo } };
     case 'REMOVE_COMBO_PHOTO':
@@ -391,6 +409,26 @@ export const DataProvider = ({ children }) => {
             break;
           case 'REMOVE_COMBINATION':
             await removeRecentCombination(user.uid, action.payload);
+            break;
+          case 'UPDATE_POLISH_RATING':
+          case 'UPDATE_POLISH_COMMENT':
+            // Find the polish to update
+            const polishToUpdate = state.nailPolishes.find(p => 
+              p.name === action.payload.name && p.brand === action.payload.brand
+            );
+            if (polishToUpdate && polishToUpdate.id) {
+              // Update the polish in Firebase with the new rating or comment
+              const updates = action.type === 'UPDATE_POLISH_RATING' 
+                ? { rating: action.payload.rating }
+                : { comment: action.payload.comment };
+              
+              // Since we don't have a dedicated updatePolish function, we'll remove and re-add
+              // Or better yet, we should add an update function
+              // For now, let's use the existing pattern
+              const updatedPolish = { ...polishToUpdate, ...updates };
+              await removePolishFromCollection(user.uid, polishToUpdate.id);
+              await addPolishToCollection(user.uid, updatedPolish);
+            }
             break;
           default:
             // For other actions, we don't need Firebase sync yet

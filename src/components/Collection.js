@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useData } from '../context/DataContext';
 import { useModal } from '../context/ModalContext';
+import StarRating from './StarRating';
 
 const Collection = () => {
   const { nailPolishes, toppers, finishers, getAllColors, getAllFormulas, getAllTopperTypes, getAllFinisherTypes, getAllBrands, getAllCollections, dispatch } = useData();
@@ -19,6 +20,10 @@ const Collection = () => {
   const [topperSortBy, setTopperSortBy] = useState('date-newest');
   const [polishSearchTerm, setPolishSearchTerm] = useState('');
   const [topperSearchTerm, setTopperSearchTerm] = useState('');
+  
+  // Rating and comment states
+  const [editingRating, setEditingRating] = useState(null);
+  const [tempComment, setTempComment] = useState('');
 
   // Color order for sorting
   const colorOrder = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'nude', 'black', 'brown', 'grey', 'white'];
@@ -48,6 +53,10 @@ const Collection = () => {
           const bCollection = b.collection || 'zzz';
           return aCollection.localeCompare(bCollection);
         });
+      case 'rating-high':
+        return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      case 'rating-low':
+        return sorted.sort((a, b) => (a.rating || 0) - (b.rating || 0));
       default:
         return sorted;
     }
@@ -188,6 +197,42 @@ const Collection = () => {
       dispatch({ type: 'REMOVE_FINISHER', payload: finisher });
       success('Finisher deleted successfully!');
     }
+  };
+
+  // Rating handlers
+  const handleRatingChange = (polish, newRating) => {
+    dispatch({
+      type: 'UPDATE_POLISH_RATING',
+      payload: {
+        name: polish.name,
+        brand: polish.brand,
+        rating: newRating
+      }
+    });
+  };
+
+  const handleStartEditComment = (polish) => {
+    setEditingRating(`${polish.name}-${polish.brand}`);
+    setTempComment(polish.comment || '');
+  };
+
+  const handleSaveComment = (polish) => {
+    dispatch({
+      type: 'UPDATE_POLISH_COMMENT',
+      payload: {
+        name: polish.name,
+        brand: polish.brand,
+        comment: tempComment
+      }
+    });
+    setEditingRating(null);
+    setTempComment('');
+    success('Comment saved!');
+  };
+
+  const handleCancelComment = () => {
+    setEditingRating(null);
+    setTempComment('');
   };
 
   return (
@@ -841,6 +886,8 @@ const Collection = () => {
                   <option value="brand">Brand (A-Z)</option>
                   <option value="color">Color</option>
                   <option value="collection">Collection (A-Z)</option>
+                  <option value="rating-high">Rating (High to Low)</option>
+                  <option value="rating-low">Rating (Low to High)</option>
                 </select>
               </div>
             </div>
@@ -881,6 +928,75 @@ const Collection = () => {
                         )}
                         <span className="formula-tag">{polish.formula}</span>
                         {polish.collection && <span className="collection-tag">{polish.collection}</span>}
+                      </div>
+                      
+                      {/* Rating Section */}
+                      <div className="polish-rating-section">
+                        <div className="rating-row">
+                          <span className="rating-label">My Rating:</span>
+                          <StarRating 
+                            rating={polish.rating || 0}
+                            onRatingChange={(newRating) => handleRatingChange(polish, newRating)}
+                            size="18px"
+                          />
+                          {polish.rating && (
+                            <span className="rating-value">{polish.rating.toFixed(1)}</span>
+                          )}
+                        </div>
+                        
+                        {/* Comment Section */}
+                        <div className="comment-section">
+                          {editingRating === `${polish.name}-${polish.brand}` ? (
+                            <div className="comment-edit">
+                              <textarea
+                                value={tempComment}
+                                onChange={(e) => setTempComment(e.target.value)}
+                                placeholder="Add your thoughts about this polish... (e.g., formula quality, application, longevity)"
+                                className="comment-textarea"
+                                rows="3"
+                              />
+                              <div className="comment-buttons">
+                                <button 
+                                  type="button"
+                                  className="save-comment-button"
+                                  onClick={() => handleSaveComment(polish)}
+                                >
+                                  Save
+                                </button>
+                                <button 
+                                  type="button"
+                                  className="cancel-comment-button"
+                                  onClick={handleCancelComment}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="comment-display">
+                              {polish.comment ? (
+                                <>
+                                  <p className="comment-text">{polish.comment}</p>
+                                  <button 
+                                    type="button"
+                                    className="edit-comment-button"
+                                    onClick={() => handleStartEditComment(polish)}
+                                  >
+                                    Edit Comment
+                                  </button>
+                                </>
+                              ) : (
+                                <button 
+                                  type="button"
+                                  className="add-comment-button"
+                                  onClick={() => handleStartEditComment(polish)}
+                                >
+                                  + Add Comment
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
