@@ -358,7 +358,7 @@
 
 .topper-label {
     font-weight: 600;
-    color: #99CEBE;
+    color: #4E997A;
     margin-bottom: 5px;
 }
 
@@ -367,6 +367,11 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+    color: #333;
+}
+
+.topper-info strong {
+    color: #333;
 }
 
 .topper-type {
@@ -384,7 +389,7 @@
 
 .finisher-label {
     font-weight: 600;
-    color: #8B5A3C;
+    color: #6d4a2c;
     margin-bottom: 5px;
 }
 
@@ -393,6 +398,11 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+    color: #333;
+}
+
+.finisher-info strong {
+    color: #333;
 }
 
 .finisher-type {

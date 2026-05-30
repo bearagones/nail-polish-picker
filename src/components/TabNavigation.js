@@ -5,6 +5,7 @@ const TabNavigation = ({ activeTab, setActiveTab }) => {
     { id: 'picker', label: 'Polish Picker' },
     { id: 'collection', label: 'My Collection' },
     { id: 'combinations', label: 'Recent Combinations' },
+    { id: 'calendar', label: 'Calendar' },
     { id: 'settings', label: 'Settings' }
   ];
 

@@ -8,6 +8,7 @@ import TabNavigation from './components/TabNavigation';
 import PolishPicker from './components/PolishPicker';
 import Collection from './components/Collection';
 import Combinations from './components/Combinations';
+import Calendar from './components/Calendar';
 import Settings from './components/Settings';
 import Modal from './components/Modal';
 import Login from './components/Login';
@@ -25,6 +26,8 @@ const AppContent = () => {
         return <Collection />;
       case 'combinations':
         return <Combinations />;
+      case 'calendar':
+        return <Calendar />;
       case 'settings':
         return <Settings />;
       default:
