@@ -11,8 +11,9 @@ const Collection = () => {
   const [showAddTopper, setShowAddTopper] = useState(false);
   const [showAddFinisher, setShowAddFinisher] = useState(false);
   const [editingPolish, setEditingPolish] = useState(null);
+  const [editingTopper, setEditingTopper] = useState(null);
   const [newPolish, setNewPolish] = useState({ name: '', brand: '', colors: [], formula: '', swatchNumber: '' });
-  const [newTopper, setNewTopper] = useState({ name: '', brand: '', type: '', collection: '' });
+  const [newTopper, setNewTopper] = useState({ name: '', brand: '', type: '', collection: '', swatchNumber: '' });
   const [newFinisher, setNewFinisher] = useState({ name: '', brand: '', type: '', collection: '' });
   
   // Sort and search states
@@ -151,7 +152,7 @@ const Collection = () => {
     }
     
     dispatch({ type: 'ADD_TOPPER', payload: newTopper });
-    setNewTopper({ name: '', brand: '', type: '', collection: '' });
+    setNewTopper({ name: '', brand: '', type: '', collection: '', swatchNumber: '' });
     setShowAddTopper(false);
     success('Topper added successfully!');
   };
@@ -165,8 +166,40 @@ const Collection = () => {
   };
 
   const handleEditTopper = (topper) => {
-    // For now, we'll just show a message that topper editing isn't implemented yet
-    success('Topper editing feature coming soon!', 'Feature Not Available');
+    setEditingTopper({
+      ...topper,
+      originalName: topper.name,
+      originalBrand: topper.brand
+    });
+  };
+
+  const handleUpdateTopper = (e) => {
+    e.preventDefault();
+    if (!editingTopper.name || !editingTopper.brand || !editingTopper.type) {
+      success('Please fill in all required fields', 'Missing Information');
+      return;
+    }
+    
+    dispatch({ 
+      type: 'UPDATE_TOPPER', 
+      payload: {
+        originalName: editingTopper.originalName,
+        originalBrand: editingTopper.originalBrand,
+        updatedTopper: {
+          name: editingTopper.name,
+          brand: editingTopper.brand,
+          type: editingTopper.type,
+          collection: editingTopper.collection,
+          swatchNumber: editingTopper.swatchNumber
+        }
+      }
+    });
+    setEditingTopper(null);
+    success('Topper updated successfully!');
+  };
+
+  const cancelEditTopper = () => {
+    setEditingTopper(null);
   };
 
   const handleDeleteTopper = async (topper) => {
@@ -595,6 +628,15 @@ const Collection = () => {
               />
             )}
           </div>
+          <div className="form-group">
+            <label>Swatch # (Optional):</label>
+            <input
+              type="text"
+              value={newTopper.swatchNumber}
+              onChange={(e) => setNewTopper(prev => ({ ...prev, swatchNumber: e.target.value }))}
+              placeholder="e.g., 42 or A3"
+            />
+          </div>
           <div className="form-buttons">
             <button type="button" className="cancel-button" onClick={() => setShowAddTopper(false)}>
               Cancel
@@ -719,6 +761,133 @@ const Collection = () => {
             </button>
             <button type="submit" className="save-button">
               Add Finisher
+            </button>
+          </div>
+        </form>
+      )}
+
+      {editingTopper && (
+        <form className="edit-topper-form" onSubmit={handleUpdateTopper}>
+          <h3>Edit Topper</h3>
+          <div className="form-group">
+            <label>Name:</label>
+            <input
+              type="text"
+              value={editingTopper.name}
+              onChange={(e) => setEditingTopper(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Brand:</label>
+            <select
+              value={editingTopper.brand}
+              onChange={(e) => setEditingTopper(prev => ({ ...prev, brand: e.target.value }))}
+              required
+            >
+              <option value="">Select Brand</option>
+              {getAllBrands().map(brand => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Brand</option>
+            </select>
+            {editingTopper.brand === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom brand name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customBrand = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_BRAND', payload: customBrand });
+                    setEditingTopper(prev => ({ ...prev, brand: customBrand }));
+                  } else {
+                    setEditingTopper(prev => ({ ...prev, brand: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
+            <label>Type:</label>
+            <select
+              value={editingTopper.type}
+              onChange={(e) => setEditingTopper(prev => ({ ...prev, type: e.target.value }))}
+              required
+            >
+              <option value="">Select Type</option>
+              {getAllTopperTypes().map(type => (
+                <option key={type} value={type}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Type</option>
+            </select>
+            {editingTopper.type === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom topper type"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customType = e.target.value.toLowerCase().trim();
+                    dispatch({ type: 'ADD_CUSTOM_TOPPER_TYPE', payload: customType });
+                    setEditingTopper(prev => ({ ...prev, type: customType }));
+                  } else {
+                    setEditingTopper(prev => ({ ...prev, type: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
+            <label>Collection (Optional):</label>
+            <select
+              value={editingTopper.collection || ''}
+              onChange={(e) => setEditingTopper(prev => ({ ...prev, collection: e.target.value }))}
+            >
+              <option value="">No Collection</option>
+              {getAllCollections().map(collection => (
+                <option key={collection} value={collection}>
+                  {collection}
+                </option>
+              ))}
+              <option value="custom">+ Add Custom Collection</option>
+            </select>
+            {editingTopper.collection === 'custom' && (
+              <input
+                type="text"
+                placeholder="Enter custom collection name"
+                onBlur={(e) => {
+                  if (e.target.value.trim()) {
+                    const customCollection = e.target.value.trim();
+                    dispatch({ type: 'ADD_CUSTOM_COLLECTION', payload: customCollection });
+                    setEditingTopper(prev => ({ ...prev, collection: customCollection }));
+                  } else {
+                    setEditingTopper(prev => ({ ...prev, collection: '' }));
+                  }
+                }}
+                style={{ marginTop: '10px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
+            <label>Swatch # (Optional):</label>
+            <input
+              type="text"
+              value={editingTopper.swatchNumber || ''}
+              onChange={(e) => setEditingTopper(prev => ({ ...prev, swatchNumber: e.target.value }))}
+              placeholder="e.g., 42 or A3"
+            />
+          </div>
+          <div className="form-buttons">
+            <button type="button" className="cancel-button" onClick={cancelEditTopper}>
+              Cancel
+            </button>
+            <button type="submit" className="save-button">
+              Update Topper
             </button>
           </div>
         </form>
@@ -1101,7 +1270,12 @@ const Collection = () => {
                 {sortedAndFilteredToppers.map((topper, index) => (
                   <div key={index} className="topper-item">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h4>{topper.name}</h4>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {topper.swatchNumber && (
+                          <span className="swatch-bubble">{topper.swatchNumber}</span>
+                        )}
+                        <h4 style={{ margin: 0 }}>{topper.name}</h4>
+                      </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <button 
                           className="edit-button-circular" 

@@ -50,6 +50,15 @@ function dataReducer(state, action) {
       return { ...state, toppers: [...state.toppers, action.payload] };
     case 'REMOVE_TOPPER':
       return { ...state, toppers: state.toppers.filter(t => !(t.name === action.payload.name && t.brand === action.payload.brand)) };
+    case 'UPDATE_TOPPER':
+      return { 
+        ...state, 
+        toppers: state.toppers.map(t => 
+          t.name === action.payload.originalName && t.brand === action.payload.originalBrand 
+            ? action.payload.updatedTopper 
+            : t
+        )
+      };
     case 'ADD_FINISHER':
       return { ...state, finishers: [...state.finishers, action.payload] };
     case 'REMOVE_FINISHER':
