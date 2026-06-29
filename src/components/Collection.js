@@ -11,7 +11,7 @@ const Collection = () => {
   const [showAddTopper, setShowAddTopper] = useState(false);
   const [showAddFinisher, setShowAddFinisher] = useState(false);
   const [editingPolish, setEditingPolish] = useState(null);
-  const [newPolish, setNewPolish] = useState({ name: '', brand: '', colors: [], formula: '', collection: '' });
+  const [newPolish, setNewPolish] = useState({ name: '', brand: '', colors: [], formula: '', swatchNumber: '' });
   const [newTopper, setNewTopper] = useState({ name: '', brand: '', type: '', collection: '' });
   const [newFinisher, setNewFinisher] = useState({ name: '', brand: '', type: '', collection: '' });
   
@@ -24,6 +24,9 @@ const Collection = () => {
   // Rating and comment states
   const [editingRating, setEditingRating] = useState(null);
   const [tempComment, setTempComment] = useState('');
+  
+  // Photo states
+  const [expandedPhoto, setExpandedPhoto] = useState(null);
 
   // Color order for sorting
   const colorOrder = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'nude', 'black', 'brown', 'grey', 'white'];
@@ -96,7 +99,7 @@ const Collection = () => {
     }
     
     dispatch({ type: 'ADD_POLISH', payload: newPolish });
-    setNewPolish({ name: '', brand: '', colors: [], formula: '', collection: '' });
+    setNewPolish({ name: '', brand: '', colors: [], formula: '', swatchNumber: '' });
     setShowAddPolish(false);
     success('Polish added successfully!');
   };
@@ -127,7 +130,8 @@ const Collection = () => {
           brand: editingPolish.brand,
           colors: editingPolish.colors,
           formula: editingPolish.formula,
-          collection: editingPolish.collection
+          collection: editingPolish.collection,
+          swatchNumber: editingPolish.swatchNumber
         }
       }
     });
@@ -235,6 +239,65 @@ const Collection = () => {
     setTempComment('');
   };
 
+  // Photo handlers
+  const handlePhotoUpload = async (e, polish) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        success('Image size must be less than 5MB. Please choose a smaller image.', 'File Too Large');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const photoData = e.target.result;
+        
+        try {
+          dispatch({
+            type: 'UPDATE_POLISH_PHOTO',
+            payload: {
+              name: polish.name,
+              brand: polish.brand,
+              photo: photoData,
+              photoFile: file
+            }
+          });
+          success('Photo uploaded successfully!');
+        } catch (error) {
+          console.error('Error uploading photo:', error);
+          success('Error uploading photo. Please try again.', 'Error');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeletePhoto = async (polish) => {
+    const confirmed = await confirm('Are you sure you want to delete this photo?');
+    if (confirmed) {
+      try {
+        dispatch({
+          type: 'UPDATE_POLISH_PHOTO',
+          payload: {
+            name: polish.name,
+            brand: polish.brand,
+            photo: null,
+            photoFile: null
+          }
+        });
+        success('Photo deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting photo:', error);
+        success('Error deleting photo. Please try again.', 'Error');
+      }
+    }
+  };
+
+  const handlePhotoClick = (photoUrl) => {
+    setExpandedPhoto(photoUrl);
+  };
+
   return (
     <div>
       <div className="stats-overview">
@@ -282,9 +345,12 @@ const Collection = () => {
               value={newPolish.brand}
               onChange={(e) => setNewPolish(prev => ({ ...prev, brand: e.target.value }))}
               required
+              className="styled-select"
             >
               <option value="">Select Brand</option>
-              {getAllBrands().map(brand => (
+              <option value="Mooncat">Mooncat</option>
+              <option value="Holo Taco">Holo Taco</option>
+              {getAllBrands().filter(brand => brand !== 'Mooncat' && brand !== 'Holo Taco').map(brand => (
                 <option key={brand} value={brand}>
                   {brand}
                 </option>
@@ -403,35 +469,13 @@ const Collection = () => {
             )}
           </div>
           <div className="form-group">
-            <label>Collection (Optional):</label>
-            <select
-              value={newPolish.collection}
-              onChange={(e) => setNewPolish(prev => ({ ...prev, collection: e.target.value }))}
-            >
-              <option value="">No Collection</option>
-              {getAllCollections().map(collection => (
-                <option key={collection} value={collection}>
-                  {collection}
-                </option>
-              ))}
-              <option value="custom">+ Add Custom Collection</option>
-            </select>
-            {newPolish.collection === 'custom' && (
-              <input
-                type="text"
-                placeholder="Enter custom collection name"
-                onBlur={(e) => {
-                  if (e.target.value.trim()) {
-                    const customCollection = e.target.value.trim();
-                    dispatch({ type: 'ADD_CUSTOM_COLLECTION', payload: customCollection });
-                    setNewPolish(prev => ({ ...prev, collection: customCollection }));
-                  } else {
-                    setNewPolish(prev => ({ ...prev, collection: '' }));
-                  }
-                }}
-                style={{ marginTop: '10px' }}
-              />
-            )}
+            <label>Swatch # (Optional):</label>
+            <input
+              type="text"
+              value={newPolish.swatchNumber}
+              onChange={(e) => setNewPolish(prev => ({ ...prev, swatchNumber: e.target.value }))}
+              placeholder="e.g., 42 or A3"
+            />
           </div>
           <div className="form-buttons">
             <button type="button" className="cancel-button" onClick={() => setShowAddPolish(false)}>
@@ -819,35 +863,13 @@ const Collection = () => {
             )}
           </div>
           <div className="form-group">
-            <label>Collection (Optional):</label>
-            <select
-              value={editingPolish.collection}
-              onChange={(e) => setEditingPolish(prev => ({ ...prev, collection: e.target.value }))}
-            >
-              <option value="">No Collection</option>
-              {getAllCollections().map(collection => (
-                <option key={collection} value={collection}>
-                  {collection}
-                </option>
-              ))}
-              <option value="custom">+ Add Custom Collection</option>
-            </select>
-            {editingPolish.collection === 'custom' && (
-              <input
-                type="text"
-                placeholder="Enter custom collection name"
-                onBlur={(e) => {
-                  if (e.target.value.trim()) {
-                    const customCollection = e.target.value.trim();
-                    dispatch({ type: 'ADD_CUSTOM_COLLECTION', payload: customCollection });
-                    setEditingPolish(prev => ({ ...prev, collection: customCollection }));
-                  } else {
-                    setEditingPolish(prev => ({ ...prev, collection: '' }));
-                  }
-                }}
-                style={{ marginTop: '10px' }}
-              />
-            )}
+            <label>Swatch # (Optional):</label>
+            <input
+              type="text"
+              value={editingPolish.swatchNumber || ''}
+              onChange={(e) => setEditingPolish(prev => ({ ...prev, swatchNumber: e.target.value }))}
+              placeholder="e.g., 42 or A3"
+            />
           </div>
           <div className="form-buttons">
             <button type="button" className="cancel-button" onClick={cancelEdit}>
@@ -914,6 +936,26 @@ const Collection = () => {
                           </button>
                         </div>
                       </div>
+                      {/* Polish Photo */}
+                      {polish.photo && (
+                        <div className="polish-photo-display">
+                          <img 
+                            src={polish.photo}
+                            alt={polish.name}
+                            className="polish-photo-thumbnail"
+                            onClick={() => handlePhotoClick(polish.photo)}
+                            title="Click to view full size"
+                          />
+                          <button 
+                            className="delete-polish-photo-button"
+                            onClick={() => handleDeletePhoto(polish)}
+                            title="Delete photo"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      )}
+                      
                       <div className="polish-details">
                         <span className="brand">{polish.brand}</span>
                         {/* Display multiple colors or single color */}
@@ -927,8 +969,25 @@ const Collection = () => {
                           <span className="color-tag">{polish.color}</span>
                         )}
                         <span className="formula-tag">{polish.formula}</span>
+                        {polish.swatchNumber && <span className="swatch-number-tag">Swatch #{polish.swatchNumber}</span>}
                         {polish.collection && <span className="collection-tag">{polish.collection}</span>}
                       </div>
+                      
+                      {/* Photo Upload Button */}
+                      {!polish.photo && (
+                        <div className="polish-photo-upload">
+                          <label htmlFor={`polish-photo-${index}`} className="upload-polish-photo-button">
+                            📷 Add Photo
+                          </label>
+                          <input
+                            id={`polish-photo-${index}`}
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handlePhotoUpload(e, polish)}
+                            style={{ display: 'none' }}
+                          />
+                        </div>
+                      )}
                       
                       {/* Rating Section */}
                       <div className="polish-rating-section">
@@ -1109,6 +1168,25 @@ const Collection = () => {
           </div>
         )}
       </div>
+      
+      {/* Photo Modal */}
+      {expandedPhoto && (
+        <div className="photo-modal" onClick={() => setExpandedPhoto(null)}>
+          <div className="photo-modal-content" onClick={(e) => e.stopPropagation()}>
+            <img 
+              src={expandedPhoto}
+              alt="Polish photo expanded" 
+              className="photo-expanded"
+            />
+            <button 
+              className="close-modal-button"
+              onClick={() => setExpandedPhoto(null)}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

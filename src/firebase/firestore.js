@@ -85,6 +85,29 @@ export const removePolishFromCollection = async (userId, polishId) => {
   }
 };
 
+// Update polish in user's collection
+export const updatePolishInCollection = async (userId, polishId, updates) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const updatedCollection = userData.polishCollection.map(polish => 
+        polish.id === polishId ? { ...polish, ...updates, updatedAt: new Date().toISOString() } : polish
+      );
+      
+      await updateDoc(userRef, {
+        polishCollection: updatedCollection,
+        updatedAt: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.error("Error updating polish:", error);
+    throw new Error(error.message);
+  }
+};
+
 // Add topper to user's collection
 export const addTopperToCollection = async (userId, topper) => {
   try {

@@ -215,6 +215,17 @@
     display: inline-block;
 }
 
+.polish-item .swatch-number-tag {
+    background: rgba(255, 193, 7, 0.15);
+    color: #856404;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
 /* Progress Bar Styles */
 .progress-container {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -1318,4 +1329,76 @@
 .cancel-comment-button:hover {
     background: #5a6268;
     transform: translateY(-1px);
+}
+
+/* Polish Photo Styles */
+.polish-photo-display {
+    position: relative;
+    margin: 12px 0;
+    display: inline-block;
+}
+
+.polish-photo-thumbnail {
+    width: 100%;
+    max-width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 3px solid #6FABD0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.polish-photo-thumbnail:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.delete-polish-photo-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.delete-polish-photo-button:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.polish-photo-upload {
+    margin: 12px 0;
+}
+
+.upload-polish-photo-button {
+    background: transparent;
+    border: 2px dashed #6FABD0;
+    color: #6FABD0;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.upload-polish-photo-button:hover {
+    background: linear-gradient(135deg, #6FABD0, #92C0D7);
+    color: white;
+    border-style: solid;
+    border-color: #6FABD0;
 }

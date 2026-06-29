@@ -1,0 +1,72 @@
+/* Custom Dropdown Styles */
+.styled-select, 
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: white;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23295982' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+    padding: 10px 40px 10px 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    color: #333;
+}
+
+.styled-select:hover,
+select:hover {
+    border-color: #6FABD0;
+    box-shadow: 0 2px 8px rgba(111, 171, 208, 0.1);
+}
+
+.styled-select:focus,
+select:focus {
+    outline: none;
+    border-color: #295982;
+    box-shadow: 0 0 0 3px rgba(111, 171, 208, 0.2);
+}
+
+.styled-select:disabled,
+select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #f8f9fa;
+}
+
+/* Option styling (limited browser support, but adds polish where available) */
+.styled-select option,
+select option {
+    padding: 10px;
+    background-color: white;
+    color: #333;
+}
+
+.styled-select option:hover,
+select option:hover {
+    background-color: #f0f8ff;
+}
+
+/* Special styling for "custom" option */
+.styled-select option[value="custom"],
+select option[value="custom"] {
+    color: #6FABD0;
+    font-weight: 600;
+}
+
+/* Sort and search selects */
+.sort-select,
+.search-select {
+    max-width: 250px;
+}
+
+/* Form group select styling */
+.form-group select {
+    margin-top: 5px;
+}

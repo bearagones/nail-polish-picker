@@ -2,7 +2,8 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { 
   addPolishToCollection, 
-  removePolishFromCollection, 
+  removePolishFromCollection,
+  updatePolishInCollection,
   addTopperToCollection, 
   removeTopperFromCollection,
   addFinisherToCollection,
@@ -131,6 +132,15 @@ function dataReducer(state, action) {
         nailPolishes: state.nailPolishes.map(p =>
           p.name === action.payload.name && p.brand === action.payload.brand
             ? { ...p, comment: action.payload.comment }
+            : p
+        )
+      };
+    case 'UPDATE_POLISH_PHOTO':
+      return {
+        ...state,
+        nailPolishes: state.nailPolishes.map(p =>
+          p.name === action.payload.name && p.brand === action.payload.brand
+            ? { ...p, photo: action.payload.photo, photoFile: action.payload.photoFile }
             : p
         )
       };
@@ -412,22 +422,25 @@ export const DataProvider = ({ children }) => {
             break;
           case 'UPDATE_POLISH_RATING':
           case 'UPDATE_POLISH_COMMENT':
+          case 'UPDATE_POLISH_PHOTO':
             // Find the polish to update
             const polishToUpdate = state.nailPolishes.find(p => 
               p.name === action.payload.name && p.brand === action.payload.brand
             );
             if (polishToUpdate && polishToUpdate.id) {
-              // Update the polish in Firebase with the new rating or comment
-              const updates = action.type === 'UPDATE_POLISH_RATING' 
-                ? { rating: action.payload.rating }
-                : { comment: action.payload.comment };
+              // Update the polish in Firebase with the new rating, comment, or photo
+              const updates = {};
+              if (action.type === 'UPDATE_POLISH_RATING') {
+                updates.rating = action.payload.rating;
+              } else if (action.type === 'UPDATE_POLISH_COMMENT') {
+                updates.comment = action.payload.comment;
+              } else if (action.type === 'UPDATE_POLISH_PHOTO') {
+                updates.photo = action.payload.photo;
+                // Don't include photoFile in Firebase updates as it's not serializable
+              }
               
-              // Since we don't have a dedicated updatePolish function, we'll remove and re-add
-              // Or better yet, we should add an update function
-              // For now, let's use the existing pattern
-              const updatedPolish = { ...polishToUpdate, ...updates };
-              await removePolishFromCollection(user.uid, polishToUpdate.id);
-              await addPolishToCollection(user.uid, updatedPolish);
+              // Use the proper update function instead of remove/add
+              await updatePolishInCollection(user.uid, polishToUpdate.id, updates);
             }
             break;
           default:
@@ -511,7 +524,7 @@ export const DataProvider = ({ children }) => {
   };
 
   const getAllFormulas = () => {
-    const defaults = ['crème', 'shimmer', 'glitter', 'metallic', 'holographic', 'chrome'];
+    const defaults = ['crème', 'shimmer', 'glitter', 'metallic', 'holographic', 'chrome', 'magnetic', 'flake'];
     const allFormulas = new Set([...defaults, ...state.customFormulas]);
     return Array.from(allFormulas).sort();
   };
