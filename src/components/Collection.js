@@ -918,7 +918,12 @@ const Collection = () => {
                   {sortedAndFilteredPolishes.map((polish, index) => (
                     <div key={index} className="polish-item">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h4>{polish.name}</h4>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {polish.swatchNumber && (
+                            <span className="swatch-bubble">{polish.swatchNumber}</span>
+                          )}
+                          <h4 style={{ margin: 0 }}>{polish.name}</h4>
+                        </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <button 
                             className="edit-button-circular" 
@@ -969,8 +974,6 @@ const Collection = () => {
                           <span className="color-tag">{polish.color}</span>
                         )}
                         <span className="formula-tag">{polish.formula}</span>
-                        {polish.swatchNumber && <span className="swatch-number-tag">Swatch #{polish.swatchNumber}</span>}
-                        {polish.collection && <span className="collection-tag">{polish.collection}</span>}
                       </div>
                       
                       {/* Photo Upload Button */}
