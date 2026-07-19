@@ -61,6 +61,25 @@ const Collection = () => {
         return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case 'rating-low':
         return sorted.sort((a, b) => (a.rating || 0) - (b.rating || 0));
+      case 'swatch':
+        return sorted.sort((a, b) => {
+          // Items without swatch numbers go to the end
+          if (!a.swatchNumber && !b.swatchNumber) return 0;
+          if (!a.swatchNumber) return 1;
+          if (!b.swatchNumber) return -1;
+          
+          // Try to parse as numbers first
+          const aNum = parseInt(a.swatchNumber);
+          const bNum = parseInt(b.swatchNumber);
+          
+          // If both are valid numbers, sort numerically
+          if (!isNaN(aNum) && !isNaN(bNum)) {
+            return aNum - bNum;
+          }
+          
+          // Otherwise, sort alphabetically
+          return a.swatchNumber.localeCompare(b.swatchNumber, undefined, { numeric: true, sensitivity: 'base' });
+        });
       default:
         return sorted;
     }
@@ -1076,6 +1095,7 @@ const Collection = () => {
                   <option value="name">Name (A-Z)</option>
                   <option value="brand">Brand (A-Z)</option>
                   <option value="color">Color</option>
+                  <option value="swatch">Swatch #</option>
                   <option value="collection">Collection (A-Z)</option>
                   <option value="rating-high">Rating (High to Low)</option>
                   <option value="rating-low">Rating (Low to High)</option>
@@ -1261,6 +1281,7 @@ const Collection = () => {
                   <option value="date-oldest">Oldest First</option>
                   <option value="name">Name (A-Z)</option>
                   <option value="brand">Brand (A-Z)</option>
+                  <option value="swatch">Swatch #</option>
                   <option value="collection">Collection (A-Z)</option>
                 </select>
               </div>

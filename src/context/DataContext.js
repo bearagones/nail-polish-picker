@@ -6,6 +6,7 @@ import {
   updatePolishInCollection,
   addTopperToCollection, 
   removeTopperFromCollection,
+  updateTopperInCollection,
   addFinisherToCollection,
   removeFinisherFromCollection,
   addRecentCombination,
@@ -55,7 +56,7 @@ function dataReducer(state, action) {
         ...state, 
         toppers: state.toppers.map(t => 
           t.name === action.payload.originalName && t.brand === action.payload.originalBrand 
-            ? action.payload.updatedTopper 
+            ? { ...t, ...action.payload.updatedTopper }
             : t
         )
       };
@@ -122,7 +123,7 @@ function dataReducer(state, action) {
         ...state, 
         nailPolishes: state.nailPolishes.map(p => 
           p.name === action.payload.originalName && p.brand === action.payload.originalBrand 
-            ? action.payload.updatedPolish 
+            ? { ...p, ...action.payload.updatedPolish }
             : p
         )
       };
@@ -428,6 +429,16 @@ export const DataProvider = ({ children }) => {
             break;
           case 'REMOVE_COMBINATION':
             await removeRecentCombination(user.uid, action.payload);
+            break;
+          case 'UPDATE_TOPPER':
+            // Find the topper to update
+            const topperToUpdate = state.toppers.find(t => 
+              t.name === action.payload.originalName && t.brand === action.payload.originalBrand
+            );
+            if (topperToUpdate && topperToUpdate.id) {
+              // Update the topper in Firebase
+              await updateTopperInCollection(user.uid, topperToUpdate.id, action.payload.updatedTopper);
+            }
             break;
           case 'UPDATE_POLISH_RATING':
           case 'UPDATE_POLISH_COMMENT':

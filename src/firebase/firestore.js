@@ -146,6 +146,29 @@ export const removeTopperFromCollection = async (userId, topperId) => {
   }
 };
 
+// Update topper in user's collection
+export const updateTopperInCollection = async (userId, topperId, updates) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+    
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const updatedCollection = userData.topperCollection.map(topper => 
+        topper.id === topperId ? { ...topper, ...updates, updatedAt: new Date().toISOString() } : topper
+      );
+      
+      await updateDoc(userRef, {
+        topperCollection: updatedCollection,
+        updatedAt: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.error("Error updating topper:", error);
+    throw new Error(error.message);
+  }
+};
+
 // Add finisher to user's collection
 export const addFinisherToCollection = async (userId, finisher) => {
   try {
