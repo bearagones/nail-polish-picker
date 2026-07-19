@@ -7,6 +7,7 @@ import UserBar from './components/UserBar';
 import TabNavigation from './components/TabNavigation';
 import PolishPicker from './components/PolishPicker';
 import Collection from './components/Collection';
+import SwatchBook from './components/SwatchBook';
 import Combinations from './components/Combinations';
 import Calendar from './components/Calendar';
 import Settings from './components/Settings';
@@ -24,6 +25,8 @@ const AppContent = () => {
         return <PolishPicker />;
       case 'collection':
         return <Collection />;
+      case 'swatchbook':
+        return <SwatchBook />;
       case 'combinations':
         return <Combinations />;
       case 'calendar':
@@ -57,7 +60,8 @@ const AppContent = () => {
   // Show main app if authenticated
   return (
     <DataProvider>
-      <div className="container">
+      <div className={`container ${activeTab === 'swatchbook' ? 'container-wide' : ''}`}>
+
         <Header />
         <UserBar />
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />

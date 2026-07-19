@@ -4,6 +4,7 @@ const TabNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'picker', label: 'Polish Picker' },
     { id: 'collection', label: 'My Collection' },
+    { id: 'swatchbook', label: 'Swatch Book' },
     { id: 'combinations', label: 'Recent Combinations' },
     { id: 'calendar', label: 'Calendar' },
     { id: 'settings', label: 'Settings' }

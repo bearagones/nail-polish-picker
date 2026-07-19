@@ -430,14 +430,32 @@ export const DataProvider = ({ children }) => {
           case 'REMOVE_COMBINATION':
             await removeRecentCombination(user.uid, action.payload);
             break;
+          case 'UPDATE_POLISH':
+            // Find the polish to update
+            const polishToUpdateFull = state.nailPolishes.find(p => 
+              p.name === action.payload.originalName && p.brand === action.payload.originalBrand
+            );
+            if (polishToUpdateFull && polishToUpdateFull.id) {
+              // Filter out undefined values since Firestore doesn't allow them
+              const sanitizedPolishUpdates = Object.fromEntries(
+                Object.entries(action.payload.updatedPolish).filter(([key, value]) => value !== undefined)
+              );
+              // Update the polish in Firebase (preserves swatchNumber, colors, formula, etc.)
+              await updatePolishInCollection(user.uid, polishToUpdateFull.id, sanitizedPolishUpdates);
+            }
+            break;
           case 'UPDATE_TOPPER':
             // Find the topper to update
             const topperToUpdate = state.toppers.find(t => 
               t.name === action.payload.originalName && t.brand === action.payload.originalBrand
             );
             if (topperToUpdate && topperToUpdate.id) {
+              // Filter out undefined values since Firestore doesn't allow them
+              const sanitizedTopperUpdates = Object.fromEntries(
+                Object.entries(action.payload.updatedTopper).filter(([key, value]) => value !== undefined)
+              );
               // Update the topper in Firebase
-              await updateTopperInCollection(user.uid, topperToUpdate.id, action.payload.updatedTopper);
+              await updateTopperInCollection(user.uid, topperToUpdate.id, sanitizedTopperUpdates);
             }
             break;
           case 'UPDATE_POLISH_RATING':

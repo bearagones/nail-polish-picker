@@ -1,0 +1,379 @@
+/* Swatch Book Styles - emulates a physical two-sided nail polish swatch book */
+
+.swatch-book-container {
+    padding: 10px 0 40px 0;
+}
+
+.swatch-book-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.swatch-book-header h2 {
+    color: #295982;
+    margin-bottom: 5px;
+}
+
+.swatch-book-subtitle {
+    color: #6c757d;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* The "open book" wrapper */
+.swatch-book {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+    background: linear-gradient(135deg, #fdfaf5, #f5ede0);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.05);
+    padding: 25px 20px;
+    gap: 0;
+}
+
+/* The center binding/spine of the book - a real flex child so it's always
+   perfectly centered between the two pages, regardless of their widths */
+.swatch-book-spine {
+    flex: 0 0 16px;
+    width: 16px;
+    align-self: stretch;
+    background: linear-gradient(90deg, rgba(0,0,0,0.15), rgba(0,0,0,0.05), rgba(0,0,0,0.15));
+    box-shadow: 0 0 8px rgba(0,0,0,0.15) inset;
+    border-radius: 4px;
+    margin: 0 10px;
+}
+
+.swatch-page {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 8px 6px;
+}
+
+.swatch-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: default;
+    transition: transform 0.2s ease;
+}
+
+.swatch-slot.swatch-filled {
+    cursor: pointer;
+}
+
+.swatch-slot.swatch-filled:hover {
+    transform: translateY(-3px) scale(1.08);
+    z-index: 5;
+}
+
+/* Nail-shaped swatch thumbnail using border-radius to emulate an almond/oval nail */
+.swatch-nail {
+    width: 28px;
+    height: 38px;
+    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
+    border: 1.5px solid rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15), inset 0 1px 2px rgba(255,255,255,0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.swatch-empty .swatch-nail {
+    border: 1.5px dashed #d0c8bc;
+    box-shadow: none;
+}
+
+.swatch-nail-shine {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    width: 8px;
+    height: 14px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    filter: blur(2px);
+}
+
+.swatch-number-label {
+    font-size: 0.6rem;
+    color: #6c757d;
+    margin-top: 3px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.swatch-filled .swatch-number-label {
+    color: #295982;
+}
+
+/* Swatch detail modal (shown when clicking a filled swatch) */
+.swatch-detail-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.swatch-detail-content {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 320px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.swatch-detail-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.swatch-detail-close:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.swatch-detail-nail {
+    width: 90px;
+    height: 130px;
+    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
+    border: 3px solid rgba(0,0,0,0.15);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2), inset 0 2px 6px rgba(255,255,255,0.4);
+    margin: 0 auto 15px auto;
+}
+
+.swatch-detail-content h3 {
+    color: #295982;
+    margin-bottom: 4px;
+}
+
+.swatch-detail-brand {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.swatch-detail-number {
+    display: inline-block;
+    background: linear-gradient(135deg, #295982, #6FABD0);
+    color: white;
+    padding: 4px 14px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.swatch-detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+
+.swatch-adjust-fit-button {
+    margin-top: 16px;
+    background: linear-gradient(135deg, #99CEBE, #6FABD0);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.swatch-adjust-fit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(41, 89, 130, 0.3);
+}
+
+/* Position editor modal (pan & zoom crop tool for swatch book thumbnails) */
+.swatch-position-editor-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    backdrop-filter: blur(4px);
+}
+
+.swatch-position-editor-content {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 380px;
+    width: 92%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+.swatch-position-editor-content h3 {
+    color: #295982;
+    margin-bottom: 6px;
+}
+
+.position-editor-hint {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-bottom: 18px;
+}
+
+.position-editor-preview {
+    width: 160px;
+    height: 220px;
+    margin: 0 auto 18px auto;
+    border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
+    border: 2px solid rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2), inset 0 2px 6px rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+    background: #f1f1f1;
+    touch-action: none;
+    user-select: none;
+}
+
+.position-editor-preview:active {
+    cursor: grabbing;
+}
+
+.position-editor-controls {
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+.position-editor-controls label {
+    display: block;
+    font-size: 0.85rem;
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.position-editor-controls input[type="range"] {
+    width: 100%;
+    accent-color: #295982;
+}
+
+.position-editor-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.position-editor-reset,
+.position-editor-cancel,
+.position-editor-save {
+    flex: 1;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.position-editor-reset {
+    background: #f1f1f1;
+    color: #495057;
+}
+
+.position-editor-reset:hover {
+    background: #e2e6ea;
+}
+
+.position-editor-cancel {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.position-editor-cancel:hover {
+    background: #f1b0b7;
+}
+
+.position-editor-save {
+    background: linear-gradient(135deg, #295982, #6FABD0);
+    color: white;
+}
+
+.position-editor-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(41, 89, 130, 0.3);
+}
+
+.position-editor-note {
+    font-size: 0.75rem;
+    color: #adb5bd;
+    line-height: 1.4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1100px) {
+    .swatch-book {
+        flex-direction: column;
+    }
+
+    .swatch-book-spine {
+        display: none;
+    }
+
+    .swatch-page {
+        min-width: unset;
+        border-right: none !important;
+        padding: 10px 0 !important;
+    }
+
+    .swatch-page:not(:last-child) {
+        border-bottom: 2px dashed #d0c8bc;
+        padding-bottom: 20px !important;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .swatch-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .swatch-nail {
+        width: 24px;
+        height: 32px;
+    }
+}
